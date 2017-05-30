@@ -1,13 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorSecondary</item>
+        <item name="android:navigationBarColor">@color/colorPrimaryLight</item>
         <item name="android:textColorSecondary">@color/colorSecondaryDark</item>
         <item name="android:textColorSecondaryInverse">@color/colorSecondaryLight</item>
     </style>
-
 </resources>
