@@ -43,7 +43,11 @@ public class LiveViewActivity extends AppCompatActivity {
 //                }
 //            }
 //        }
-        mCamera = Camera.open(1);
+        try {
+            mCamera = Camera.open(Camera.CameraInfo.CAMERA_FACING_FRONT);
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        }
 
         if(mCamera != null) {
             mCameraView = new CameraView(this, mCamera);//create a SurfaceView to show camera data
