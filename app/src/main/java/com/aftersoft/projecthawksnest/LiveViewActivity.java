@@ -28,32 +28,33 @@ public class LiveViewActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_live_view);
-
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
-        boolean qOpened = false;
+//        int cameraCount = 0;
+//        Camera.CameraInfo cameraInfo =  new Camera.CameraInfo();
+//        cameraCount = Camera.getNumberOfCameras();
+//        for (int camIdx = 0; camIdx<cameraCount; camIdx++) {
+//            Camera.getCameraInfo(camIdx, cameraInfo);
+//            if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+//                try {
+//                    mCamera = Camera.open();
+//                } catch (RuntimeException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
+        mCamera = Camera.open(1);
 
-        try {
-            releaseCameraAndPreview();
-            mCamera = Camera.open(id);
-            qOpened = (mCamera != null);
-        } catch (Exception e) {
-            Log.e(getString(R.string.app_name), "failed to open Camera");
-            e.printStackTrace();
-        }
-
-        if(mCamera != null){
-            mCameraView = new CameraView(this,mCamera);
+        if(mCamera != null) {
+            mCameraView = new CameraView(this, mCamera);//create a SurfaceView to show camera data
             FrameLayout camera_view = (FrameLayout)findViewById(R.id.camera_view);
-            camera_view.addView(mCameraView);
+            camera_view.addView(mCameraView);//add the SurfaceView to the layout
         }
     }
-    private void releaseCameraAndPreview() {
-        mPreview.setCamera(null);
-        if (mCamera != null) {
-            mCamera.release();
-            mCamera = null;
-        }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
     }
 }
 
