@@ -46,7 +46,6 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
 
         wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
 
-
         Intent intent =  new Intent(getApplicationContext(),LiveViewActivity.class);
         startActivity(intent);
     }
