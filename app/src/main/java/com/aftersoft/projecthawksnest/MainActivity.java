@@ -1,14 +1,17 @@
 package com.aftersoft.projecthawksnest;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
@@ -30,7 +33,6 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         scannerView = new ZXingScannerView(this);
         setContentView(scannerView);
         scannerView.setFormats(Collections.singletonList(BarcodeFormat.QR_CODE));
@@ -114,4 +116,12 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         wifiManager.reconnect();
         Log.i("Wifi connected: ", String.valueOf(wifiManager.getConnectionInfo()));
     }
+
+    public void showBracketIntroduction(){
+        AlertDialog.Builder BracketDialog =  new AlertDialog.Builder(this);
+        BracketDialog.setTitle("Bracket Placement").setMessage("Place your phone inside of the bracket in front of you. Make sure your phone is fastened tightly.").show();
+    }
+
+
+
 }
