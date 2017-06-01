@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.GridView;
 
 import java.util.ArrayList;
@@ -18,8 +19,8 @@ public class GalleryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_gallery);
 
         final ArrayList<GalleryItem> galleryItems = getTestItems();
-
         final GridView gridView = (GridView) this.findViewById(R.id.gridview);
+        final Button nextButton = (Button) this.findViewById(R.id.next_button);
 
         ArrayAdapter gridViewAdapter = new GalleryAdapter(getApplicationContext(), galleryItems);
 
@@ -33,6 +34,13 @@ public class GalleryActivity extends AppCompatActivity {
                 galleryItems.set(position, galleryItem);
                 Log.i("Test", "" + galleryItem.isChecked());
                 gridView.invalidateViews();
+            }
+        });
+
+        nextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                
             }
         });
 
