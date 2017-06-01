@@ -1,6 +1,7 @@
 package com.aftersoft.projecthawksnest;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
@@ -44,6 +45,10 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         }
 
         wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
+
+
+        Intent intent =  new Intent(getApplicationContext(),LiveViewActivity.class);
+        startActivity(intent);
     }
 
     @Override
