@@ -1,14 +1,22 @@
 package com.aftersoft.projecthawksnest;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
@@ -16,6 +24,8 @@ import com.google.zxing.client.result.WifiParsedResult;
 import com.google.zxing.client.result.WifiResultParser;
 
 import java.util.Collections;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
@@ -26,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     private boolean resultHandled;
     private WifiManager wifiManager;
     private int netId = -1;
+    private AlertDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +55,16 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         }
 
         wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        View mView = getLayoutInflater().inflate(R.layout.activity_qrloading, null);
+        builder.setView(mView);
+        dialog = builder.create();
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        WindowManager.LayoutParams wmlp = dialog.getWindow().getAttributes();
+        wmlp.y = (int) (getResources().getDisplayMetrics().heightPixels * 0.3);
     }
 
     @Override
@@ -71,13 +92,37 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         }
     }
 
+    static int seconds = 0;
+
     @Override
     public void handleResult(Result result) {
+        dialog.show();
         resultHandled = true;
         Log.v(TAG, result.getText()); // Prints scan results
         Log.v(TAG, result.getBarcodeFormat().toString());
         WifiParsedResult parsedResult = (WifiParsedResult) WifiResultParser.parseResult(result);
         connectToWifi(parsedResult.getSsid(), parsedResult.getPassword(), parsedResult.getNetworkEncryption(), parsedResult.isHidden());
+        Thread thread = new Thread(){
+            @Override
+            public void run(){
+                Timer timer = new Timer();
+                TimerTask task = new TimerTask() {
+                    @Override
+                    public void run() {
+                        while (seconds < 10000){
+                            if (wifiManager.getConnectionInfo().getNetworkId() == netId){
+                                dialog.cancel();
+                                break;
+                            }
+                            seconds++;
+                        }
+//                        Toast.makeText(MainActivity.this, "Failed to connect", Toast.LENGTH_SHORT).show();
+                    }
+                };
+                timer.schedule(task, 0, 10001);
+            }
+        };
+        thread.start();
     }
 
     @Override
