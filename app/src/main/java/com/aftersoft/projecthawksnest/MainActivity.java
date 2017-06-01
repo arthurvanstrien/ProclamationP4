@@ -26,6 +26,8 @@ import com.google.zxing.client.result.WifiResultParser;
 import java.util.Collections;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
@@ -92,8 +94,6 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         }
     }
 
-    static int seconds = 0;
-
     @Override
     public void handleResult(Result result) {
         dialog.show();
@@ -102,27 +102,6 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         Log.v(TAG, result.getBarcodeFormat().toString());
         WifiParsedResult parsedResult = (WifiParsedResult) WifiResultParser.parseResult(result);
         connectToWifi(parsedResult.getSsid(), parsedResult.getPassword(), parsedResult.getNetworkEncryption(), parsedResult.isHidden());
-        Thread thread = new Thread(){
-            @Override
-            public void run(){
-                Timer timer = new Timer();
-                TimerTask task = new TimerTask() {
-                    @Override
-                    public void run() {
-                        while (seconds < 10000){
-                            if (wifiManager.getConnectionInfo().getNetworkId() == netId){
-                                dialog.cancel();
-                                break;
-                            }
-                            seconds++;
-                        }
-//                        Toast.makeText(MainActivity.this, "Failed to connect", Toast.LENGTH_SHORT).show();
-                    }
-                };
-                timer.schedule(task, 0, 10001);
-            }
-        };
-        thread.start();
     }
 
     @Override
@@ -140,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         Log.i("Connecting to", ssid);
         if (!networkEncryption.equals("WPA"))
             return;
-        WifiConfiguration wifiConfig = new WifiConfiguration();
+        final WifiConfiguration wifiConfig = new WifiConfiguration();
         wifiConfig.SSID = String.format("\"%s\"", ssid);
         wifiConfig.preSharedKey = String.format("\"%s\"", password);
         wifiConfig.hiddenSSID = hidden;
