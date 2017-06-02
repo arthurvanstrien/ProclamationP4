@@ -1,5 +1,6 @@
 package com.aftersoft.projecthawksnest;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.GridView;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 public class GalleryActivity extends AppCompatActivity {
@@ -37,10 +39,20 @@ public class GalleryActivity extends AppCompatActivity {
             }
         });
 
+        gridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(getApplicationContext(), DetailPhotoActivity.class);
+                intent.putExtra("EXTRA", galleryItems.get(position));
+                startActivity(intent);
+                return false;
+            }
+        });
+
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                
+
             }
         });
 

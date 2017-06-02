@@ -33,7 +33,7 @@ public class GalleryAdapter extends ArrayAdapter<GalleryItem> {
         ImageView imageView =  (ImageView) convertView.findViewById(R.id.imageView_image);
         ImageView checkView =  (ImageView) convertView.findViewById(R.id.imageView_check);
 
-        imageView.setBackgroundColor(Color.BLACK);
+        imageView.setImageResource(R.drawable.checked_image);
 
         if (item.isChecked())
             checkView.setImageResource(R.drawable.checked_image);

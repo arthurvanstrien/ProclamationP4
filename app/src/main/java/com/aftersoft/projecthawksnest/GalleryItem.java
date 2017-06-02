@@ -3,11 +3,13 @@ package com.aftersoft.projecthawksnest;
 import android.graphics.drawable.Icon;
 import android.media.Image;
 
+import java.io.Serializable;
+
 /**
  * Created by lars on 01-06-17.
  */
 
-public class GalleryItem {
+public class GalleryItem implements Serializable {
 
     private Icon photo;
     private boolean checked;
