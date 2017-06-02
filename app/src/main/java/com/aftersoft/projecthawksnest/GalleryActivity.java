@@ -64,7 +64,15 @@ public class GalleryActivity extends AppCompatActivity {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                File imagesFolder = new File(getFilesDir(), "images");
+                Log.i("Tets", "Files:" + imagesFolder.listFiles().length);
+                for (int count = imagesFolder.listFiles().length - 1; count > -1; count--) {
+                    if (!galleryItems.get(count).isChecked()){
+                        imagesFolder.listFiles()[count].delete();
+                        Log.i("Tets", "Verwijderd:" + count);
+                    }
+                }
+                Log.i("Tets", "Files:" + imagesFolder.listFiles().length);
             }
         });
 
