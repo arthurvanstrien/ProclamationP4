@@ -42,12 +42,12 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
             requestPermissions(new String[]{Manifest.permission.CAMERA}, PERMISSIONS_REQUEST_ACCESS_CAMERA);
         } else {
             scannerView.startCamera();
+
+            Intent intent =  new Intent(getApplicationContext(),LiveViewActivity.class);
+            startActivity(intent);
         }
 
         wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
-
-        Intent intent =  new Intent(getApplicationContext(),LiveViewActivity.class);
-        startActivity(intent);
     }
 
     @Override
@@ -91,6 +91,9 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         if (requestCode == PERMISSIONS_REQUEST_ACCESS_CAMERA) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 scannerView.startCamera();
+
+                Intent intent =  new Intent(getApplicationContext(),LiveViewActivity.class);
+                startActivity(intent);
             }
         }
     }
