@@ -1,5 +1,7 @@
 package com.aftersoft.projecthawksnest;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Icon;
 import android.media.Image;
 
@@ -11,19 +13,19 @@ import java.io.Serializable;
 
 public class GalleryItem implements Serializable {
 
-    private Icon photo;
+    private byte[] photo;
     private boolean checked;
 
-    public GalleryItem(Icon photo) {
+    public GalleryItem(byte[] photo) {
         this.photo = photo;
         checked = false;
     }
 
-    public Icon getPhoto() {
-        return photo;
+    public Bitmap getPhoto() {
+        return BitmapFactory.decodeByteArray(photo, 0, photo.length);
     }
 
-    public void setPhoto(Icon photo) {
+    public void setPhoto(byte[] photo) {
         this.photo = photo;
     }
 

@@ -17,7 +17,7 @@ public class DetailPhotoActivity extends AppCompatActivity {
 
         ImageView imageView = (ImageView) findViewById(R.id.imageView);
 
-        //imageView.setImageIcon(galleryItem.getPhoto());
+        imageView.setImageBitmap(galleryItem.getPhoto());
 
     }
 }
