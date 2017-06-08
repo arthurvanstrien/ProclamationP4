@@ -9,9 +9,8 @@
         android:id="@+id/imageView_image"
         android:layout_width="90dp"
         android:layout_height="90dp"
-        app:srcCompat="@android:color/black"
-        tools:layout_editor_absoluteY="16dp"
-        tools:layout_editor_absoluteX="16dp" />
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="16dp" />
 
     <ImageView
         android:id="@+id/imageView_check"
