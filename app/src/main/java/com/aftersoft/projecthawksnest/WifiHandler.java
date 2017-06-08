@@ -98,6 +98,7 @@ public class WifiHandler {
                         }
                         Log.i("Wifi connected: ", String.valueOf(wifiManager.getConnectionInfo()));
                         connected = true;
+                        timer.cancel();
                     }
                 }
                 Log.i("i: ", String.valueOf(i));
