@@ -85,13 +85,4 @@ public class DetailPhotoActivity extends AppCompatActivity {
         return true;
     }
 
-//    @Override
-//    public void onBackPressed() {
-//        Intent intent = new Intent();
-//        intent.putExtra("EXTRA", galleryItem);
-//        intent.putExtra("POSITION", position);
-//        setResult(Activity.RESULT_OK, intent);
-//        finish();
-//        super.onBackPressed();
-//    }
 }
