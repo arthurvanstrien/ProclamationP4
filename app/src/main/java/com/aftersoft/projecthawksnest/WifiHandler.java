@@ -21,6 +21,7 @@ public class WifiHandler {
     private static volatile WifiHandler instance;
     private WifiManager wifiManager;
     private ConnectivityManager connManager;
+    private WifiConfiguration wifiConfig;
     private boolean connected;
     private int netId = -1;
     private List<WifiStateListener> wifiStateListeners = new ArrayList<>();
@@ -54,7 +55,7 @@ public class WifiHandler {
         Log.i("Connecting to", ssid);
         if (!networkEncryption.equals("WPA"))
             return false;
-        WifiConfiguration wifiConfig = new WifiConfiguration();
+        wifiConfig = new WifiConfiguration();
         wifiConfig.SSID = String.format("\"%s\"", ssid);
         wifiConfig.preSharedKey = String.format("\"%s\"", password);
         wifiConfig.hiddenSSID = hidden;
@@ -90,17 +91,21 @@ public class WifiHandler {
             @Override
             public void run() {
                 i++;
-                if (connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnected() && !connected && wifiManager.getConnectionInfo().getNetworkId() == netId) {
-                    for (WifiStateListener wifiStateListener : wifiStateListeners) {
-                        wifiStateListener.onConnected();
+                if (connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnected() && !connected) {
+                    if (wifiManager.getConnectionInfo().getSSID().equals(wifiConfig.SSID)) {
+                        for (WifiStateListener wifiStateListener : wifiStateListeners) {
+                            wifiStateListener.onConnected();
+                        }
+                        Log.i("Wifi connected: ", String.valueOf(wifiManager.getConnectionInfo()));
+                        connected = true;
                     }
-                    Log.i("Wifi connected: ", String.valueOf(wifiManager.getConnectionInfo()));
-                    connected = true;
                 }
                 Log.i("i: ", String.valueOf(i));
-                if (i == 3){
-                    for (WifiStateListener wifiStateListener : wifiStateListeners) {
-                        wifiStateListener.onConnectedFail();
+                if (i == 5){
+                    if (!connected) {
+                        for (WifiStateListener wifiStateListener : wifiStateListeners) {
+                            wifiStateListener.onConnectedFail();
+                        }
                     }
                     timer.cancel();
                 }
