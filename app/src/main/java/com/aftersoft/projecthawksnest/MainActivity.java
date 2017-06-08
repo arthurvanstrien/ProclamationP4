@@ -2,8 +2,6 @@ package com.aftersoft.projecthawksnest;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
-import android.net.wifi.WifiConfiguration;
-import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -15,9 +13,7 @@ import com.google.zxing.Result;
 import com.google.zxing.client.result.WifiParsedResult;
 import com.google.zxing.client.result.WifiResultParser;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
@@ -44,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
             scannerView.startCamera();
         }
 
-        WifiHandler wifiHandler = WifiHandler.getInstance(getApplicationContext());
+        wifiHandler = WifiHandler.getInstance(getApplicationContext());
     }
 
     @Override
