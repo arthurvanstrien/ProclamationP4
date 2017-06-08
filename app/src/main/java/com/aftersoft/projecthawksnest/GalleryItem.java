@@ -20,7 +20,7 @@ public class GalleryItem implements Serializable {
     }
 
     public Bitmap getPhoto() {
-        return BitmapFactory.decodeByteArray(photo, 0, photo.length, options);
+        return BitmapFactory.decodeByteArray(photo, 0, photo.length);
     }
 
     public void setPhoto(byte[] photo) {
