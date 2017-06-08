@@ -2,8 +2,6 @@ package com.aftersoft.projecthawksnest;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Icon;
-import android.media.Image;
 
 import java.io.Serializable;
 

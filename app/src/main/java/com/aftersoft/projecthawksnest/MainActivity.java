@@ -1,14 +1,11 @@
 package com.aftersoft.projecthawksnest;
 
 import android.Manifest;
-import android.content.Intent;
-import android.content.Context;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.net.wifi.WifiConfiguration;
-import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
@@ -17,17 +14,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
 import com.google.zxing.client.result.WifiParsedResult;
 import com.google.zxing.client.result.WifiResultParser;
-
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
@@ -37,6 +29,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     private ZXingScannerView scannerView;
     private boolean resultHandled;
     private WifiHandler wifiHandler;
+    private Dialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,12 +44,10 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
             requestPermissions(new String[]{Manifest.permission.CAMERA}, PERMISSIONS_REQUEST_ACCESS_CAMERA);
         } else {
             scannerView.startCamera();
-
-            Intent intent =  new Intent(getApplicationContext(),LiveViewActivity.class);
-            startActivity(intent);
         }
 
-        WifiHandler wifiHandler = WifiHandler.getInstance(getApplicationContext());
+        wifiHandler = WifiHandler.getInstance(getApplicationContext());
+        wifiHandler.addOnWifiStateListener(this);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         View mView = getLayoutInflater().inflate(R.layout.activity_qrloading, null);
@@ -121,7 +112,10 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
 
     @Override
     public void onConnected() {
-
+        scannerView.stopCameraPreview();
+        scannerView.stopCamera();
+        Intent intent =  new Intent(getApplicationContext(),LiveViewActivity.class);
+        startActivity(intent);
     }
 
     @Override
