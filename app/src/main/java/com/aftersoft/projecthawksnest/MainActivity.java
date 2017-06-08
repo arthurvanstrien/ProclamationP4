@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     private ZXingScannerView scannerView;
     private boolean resultHandled;
     private WifiHandler wifiHandler;
-    private Dialog dialog;
+    private AlertDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,6 +112,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
 
     @Override
     public void onConnected() {
+        dialog.cancel();
         scannerView.stopCameraPreview();
         scannerView.stopCamera();
         Intent intent =  new Intent(getApplicationContext(),LiveViewActivity.class);

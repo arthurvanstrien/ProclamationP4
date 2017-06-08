@@ -1,12 +1,15 @@
 package com.aftersoft.projecthawksnest;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static android.content.Context.WIFI_SERVICE;
 
@@ -17,6 +20,8 @@ import static android.content.Context.WIFI_SERVICE;
 public class WifiHandler {
     private static volatile WifiHandler instance;
     private WifiManager wifiManager;
+    private ConnectivityManager connManager;
+    private boolean connected;
     private int netId = -1;
     private List<WifiStateListener> wifiStateListeners = new ArrayList<>();
 
@@ -33,6 +38,7 @@ public class WifiHandler {
 
     private WifiHandler(Context applicationContext) {
         wifiManager = (WifiManager) applicationContext.getApplicationContext().getSystemService(WIFI_SERVICE);
+        connManager = (ConnectivityManager) applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE);
     }
 
     /**
@@ -64,14 +70,27 @@ public class WifiHandler {
         }
 
         wifiManager.enableNetwork(netId, true);
-        if (wifiManager.reconnect()) {
-            for (WifiStateListener wifiStateListener : wifiStateListeners) {
-                wifiStateListener.onConnected();
+
+        connected = false;
+
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                if (connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnected() && !connected) {
+                    for (WifiStateListener wifiStateListener : wifiStateListeners) {
+                        wifiStateListener.onConnected();
+                    }
+                    Log.i("Wifi connected: ", String.valueOf(wifiManager.getConnectionInfo()));
+                    connected = true;
+                }
+
             }
-            Log.i("Wifi connected: ", String.valueOf(wifiManager.getConnectionInfo()));
-            return true;
-        } else
-            return false;
+        };
+
+        Timer timer = new Timer(true);
+        timer.scheduleAtFixedRate(task, 0, 5000);
+
+        return connected;
     }
 
     /**
@@ -79,17 +98,24 @@ public class WifiHandler {
      * @return returns true if the reconnection was successful
      */
     public boolean reconnect() {
-        if (wifiManager.getConnectionInfo().getNetworkId() == netId) {
-            if (wifiManager.reconnect()) {
-                for (WifiStateListener wifiStateListener : wifiStateListeners) {
-                    wifiStateListener.onConnected();
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                if (connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnected() && !connected) {
+                    for (WifiStateListener wifiStateListener : wifiStateListeners) {
+                        wifiStateListener.onConnected();
+                    }
+                    Log.i("Wifi connected: ", String.valueOf(wifiManager.getConnectionInfo()));
+                    connected = true;
                 }
-                Log.i("Wifi connected: ", String.valueOf(wifiManager.getConnectionInfo()));
-                return true;
-            } else
-                return false;
-        } else
-            return false;
+
+            }
+        };
+
+        Timer timer = new Timer(true);
+        timer.scheduleAtFixedRate(task, 0, 5000);
+
+        return connected;
     }
 
     public void disconnect() {
