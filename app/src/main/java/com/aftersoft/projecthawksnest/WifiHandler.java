@@ -55,9 +55,6 @@ public class WifiHandler {
         wifiConfig.allowedProtocols.set(WifiConfiguration.Protocol.WPA);
         wifiConfig.allowedProtocols.set(WifiConfiguration.Protocol.RSN);
 
-        if (!wifiManager.isWifiEnabled())
-            wifiManager.setWifiEnabled(true);
-
         netId = wifiManager.addNetwork(wifiConfig);
 
         if (wifiManager.isWifiEnabled()) {
