@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/savetitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="21dp"
+        android:layout_marginTop="14dp"
+        android:text="Photo's saved"
+        android:textColor="@android:color/black"
+        android:textSize="16sp" />
+
+    <ImageView
+        android:id="@+id/saveicon"
+        android:layout_width="@android:dimen/notification_large_icon_width"
+        android:layout_height="@android:dimen/notification_large_icon_height"
+        android:layout_alignEnd="@+id/savetitle"
+        android:layout_below="@+id/savetitle"
+        android:layout_marginTop="30dp"
+        android:background="@mipmap/savedicon"
+        app:srcCompat="@mipmap/savedicon" />
+
+    <TextView
+        android:id="@+id/savetext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/savetitle"
+        android:layout_below="@+id/saveicon"
+        android:layout_marginTop="26dp"
+        android:text="textview" />
+
+    <Button
+        android:id="@+id/okaybutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/saveicon"
+        android:layout_below="@+id/savetext"
+        android:layout_marginStart="52dp"
+        android:layout_marginTop="21dp"
+        android:background="@android:color/transparent"
+        android:text="Okay"
+        android:textColor="@color/colorSecondary" />
+</RelativeLayout>
