@@ -31,7 +31,6 @@ public class GalleryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gallery);
-        makeTestItems();
         final ArrayList<GalleryItem> galleryItems = getGallaryItems();
         final GridView gridView = (GridView) this.findViewById(R.id.gridview);
         final Button nextButton = (Button) this.findViewById(R.id.next_button);
