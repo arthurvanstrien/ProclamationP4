@@ -15,17 +15,18 @@ import com.google.zxing.Result;
 import com.google.zxing.client.result.WifiParsedResult;
 import com.google.zxing.client.result.WifiResultParser;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
-public class MainActivity extends AppCompatActivity implements ZXingScannerView.ResultHandler {
+public class MainActivity extends AppCompatActivity implements ZXingScannerView.ResultHandler, WifiHandler.WifiStateListener {
     public final static String TAG = "MainActivity";
     private static final int PERMISSIONS_REQUEST_ACCESS_CAMERA = 0;
     private ZXingScannerView scannerView;
     private boolean resultHandled;
-    private WifiManager wifiManager;
-    private int netId = -1;
+    private WifiHandler wifiHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
             scannerView.startCamera();
         }
 
-        wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
+        WifiHandler wifiHandler = new WifiHandler(getApplicationContext());
     }
 
     @Override
@@ -57,8 +58,6 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     protected void onPause() {
         super.onPause();
         scannerView.stopCamera();
-        if (netId >= 0)
-            wifiManager.removeNetwork(netId);
     }
 
     @Override
@@ -77,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         Log.v(TAG, result.getText()); // Prints scan results
         Log.v(TAG, result.getBarcodeFormat().toString());
         WifiParsedResult parsedResult = (WifiParsedResult) WifiResultParser.parseResult(result);
-        connectToWifi(parsedResult.getSsid(), parsedResult.getPassword(), parsedResult.getNetworkEncryption(), parsedResult.isHidden());
+        wifiHandler.connect(parsedResult.getSsid(), parsedResult.getPassword(), parsedResult.getNetworkEncryption(), parsedResult.isHidden());
     }
 
     @Override
@@ -91,27 +90,13 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         }
     }
 
-    private void connectToWifi(String ssid, String password, String networkEncryption, boolean hidden) {
-        Log.i("Connecting to", ssid);
-        if (!networkEncryption.equals("WPA"))
-            return;
-        WifiConfiguration wifiConfig = new WifiConfiguration();
-        wifiConfig.SSID = String.format("\"%s\"", ssid);
-        wifiConfig.preSharedKey = String.format("\"%s\"", password);
-        wifiConfig.hiddenSSID = hidden;
-        wifiConfig.allowedProtocols.set(WifiConfiguration.Protocol.WPA);
-        wifiConfig.allowedProtocols.set(WifiConfiguration.Protocol.RSN);
+    @Override
+    public void onConnect() {
 
-        netId = wifiManager.addNetwork(wifiConfig);
+    }
 
-        if (wifiManager.isWifiEnabled()) {
-            wifiManager.disconnect();
-        } else {
-            wifiManager.setWifiEnabled(true);
-        }
+    @Override
+    public void onDisconnect() {
 
-        wifiManager.enableNetwork(netId, true);
-        wifiManager.reconnect();
-        Log.i("Wifi connected: ", String.valueOf(wifiManager.getConnectionInfo()));
     }
 }
