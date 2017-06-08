@@ -1,16 +1,17 @@
 package com.aftersoft.projecthawksnest;
 
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.hardware.Camera;
 import android.os.Bundle;
-import android.os.Environment;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.FrameLayout;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Calendar;
@@ -19,7 +20,7 @@ import java.util.Calendar;
  * Created by Rick Verstraten on 1-6-2017.
  */
 
-public class LiveViewActivity extends AppCompatActivity implements Camera.PictureCallback {
+public class LiveViewActivity extends AppCompatActivity implements Camera.PictureCallback, View.OnClickListener {
 
     private static Camera mCamera = null;
     private CameraView mCameraView = null;
@@ -41,6 +42,8 @@ public class LiveViewActivity extends AppCompatActivity implements Camera.Pictur
             FrameLayout camera_view = (FrameLayout) findViewById(R.id.camera_view);
             camera_view.addView(mCameraView);//add the SurfaceView to the layout
         }
+
+        ((FloatingActionButton) findViewById(R.id.activityLiveView_fab_toGallery)).setOnClickListener(this);
     }
 
     /**
@@ -81,6 +84,11 @@ public class LiveViewActivity extends AppCompatActivity implements Camera.Pictur
 
     private void takePicture() {
         mCamera.takePicture(null, null, this);
+    }
+
+    @Override
+    public void onClick(View v) {
+        startActivity(new Intent(this, GalleryActivity.class));
     }
 }
 

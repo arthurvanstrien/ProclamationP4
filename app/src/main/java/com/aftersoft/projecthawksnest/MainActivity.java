@@ -1,6 +1,7 @@
 package com.aftersoft.projecthawksnest;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -21,11 +22,14 @@ import com.google.zxing.Result;
 import com.google.zxing.client.result.WifiParsedResult;
 import com.google.zxing.client.result.WifiResultParser;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.List;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
@@ -117,12 +121,27 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
 
     @Override
     public void onConnected() {
-        Intent intent =  new Intent(getApplicationContext(),LiveViewActivity.class);
+        scannerView.stopCameraPreview();
+        scannerView.stopCamera();
+        Intent intent = new Intent(getApplicationContext(), LiveViewActivity.class);
         startActivity(intent);
     }
 
     @Override
     public void onDisconnected() {
 
+    }
+
+    public void showBracketIntroduction() {
+        AlertDialog.Builder BracketDialog = new AlertDialog.Builder(this);
+        BracketDialog.setTitle("Bracket Placement").setMessage("Place your phone inside of the bracket in front of you. Make sure your phone is fastened tightly.").show();
+    }
+
+    public boolean hasUsableSpace() {
+        File imagesFolder = new File(getFilesDir(), "images");
+        if (imagesFolder.getUsableSpace() >= 104857600)
+        return true;
+
+        return false;
     }
 }
