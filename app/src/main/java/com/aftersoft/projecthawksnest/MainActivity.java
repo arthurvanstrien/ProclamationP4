@@ -94,12 +94,12 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     }
 
     @Override
-    public void onConnect() {
+    public void onConnected() {
 
     }
 
     @Override
-    public void onDisconnect() {
+    public void onDisconnected() {
 
     }
 }

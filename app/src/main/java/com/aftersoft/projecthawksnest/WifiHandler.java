@@ -69,7 +69,7 @@ public class WifiHandler {
         wifiManager.enableNetwork(netId, true);
         if (wifiManager.reconnect()) {
             for (WifiStateListener wifiStateListener : wifiStateListeners) {
-                wifiStateListener.onConnect();
+                wifiStateListener.onConnected();
             }
             Log.i("Wifi connected: ", String.valueOf(wifiManager.getConnectionInfo()));
             return true;
@@ -85,7 +85,7 @@ public class WifiHandler {
         if (wifiManager.getConnectionInfo().getNetworkId() == netId) {
             if (wifiManager.reconnect()) {
                 for (WifiStateListener wifiStateListener : wifiStateListeners) {
-                    wifiStateListener.onConnect();
+                    wifiStateListener.onConnected();
                 }
                 Log.i("Wifi connected: ", String.valueOf(wifiManager.getConnectionInfo()));
                 return true;
@@ -99,7 +99,7 @@ public class WifiHandler {
         if (wifiManager.getConnectionInfo().getNetworkId() == netId)
             wifiManager.disableNetwork(netId);
         for (WifiStateListener wifiStateListener : wifiStateListeners) {
-            wifiStateListener.onDisconnect();
+            wifiStateListener.onDisconnected();
         }
     }
 
@@ -108,13 +108,13 @@ public class WifiHandler {
             wifiManager.removeNetwork(netId);
 
         for (WifiStateListener wifiStateListener : wifiStateListeners) {
-            wifiStateListener.onDisconnect();
+            wifiStateListener.onDisconnected();
         }
     }
 
     public interface WifiStateListener {
-        void onConnect();
-        void onDisconnect();
+        void onConnected();
+        void onDisconnected();
     }
 
     public void addOnWifiStateListener(WifiStateListener wifiStateListener) {
