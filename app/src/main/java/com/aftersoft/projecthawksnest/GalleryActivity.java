@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.GridView;
 
@@ -34,8 +35,8 @@ public class GalleryActivity extends AppCompatActivity {
         final ArrayList<GalleryItem> galleryItems = getGallaryItems();
         final GridView gridView = (GridView) this.findViewById(R.id.gridview);
         final Button nextButton = (Button) this.findViewById(R.id.next_button);
-
-        ArrayAdapter gridViewAdapter = new GalleryAdapter(getApplicationContext(), galleryItems);
+       // getApplicationContext()
+        BaseAdapter gridViewAdapter = new GalleryAdapter(getFilesDir(), getApplicationContext());
 
         gridView.setAdapter(gridViewAdapter);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
