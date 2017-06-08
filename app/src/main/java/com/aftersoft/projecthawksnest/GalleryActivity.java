@@ -1,7 +1,9 @@
 package com.aftersoft.projecthawksnest;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -60,5 +62,13 @@ public class GalleryActivity extends AppCompatActivity {
 
         return galleryItems;
     }
+
+    @Override
+    public void onBackPressed() {
+       startActivity(new Intent(GalleryActivity.this,QuitPopup.class));
+    }
+
+
+
 
 }

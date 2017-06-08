@@ -1,14 +1,19 @@
 package com.aftersoft.projecthawksnest;
 
 import android.Manifest;
+import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
@@ -30,7 +35,13 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        AlertDialog.Builder builder1 = new AlertDialog.Builder(MainActivity.this);
+        LayoutInflater factory = getLayoutInflater();
+        final View view = factory.inflate(R.layout.introduction, null);
+        builder1.setTitle("Instructions");
+        builder1.setView(view);
+        builder1.setMessage("Scan the QR-code near your seat by positioning the code within the rectangle.");
+        builder1.show();
         scannerView = new ZXingScannerView(this);
         setContentView(scannerView);
         scannerView.setFormats(Collections.singletonList(BarcodeFormat.QR_CODE));
@@ -63,6 +74,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
 
     @Override
     public void onBackPressed() {
+        startActivity(new Intent(this, QuitPopup.class));
         if (!resultHandled) {
             super.onBackPressed();
         } else {
