@@ -15,11 +15,23 @@ import static android.content.Context.WIFI_SERVICE;
  */
 
 public class WifiHandler {
+    private static volatile WifiHandler instance;
     private WifiManager wifiManager;
     private int netId = -1;
     private List<WifiStateListener> wifiStateListeners = new ArrayList<>();
 
-    public WifiHandler(Context applicationContext) {
+    public static WifiHandler getInstance(Context applicationContext) {
+        if (instance == null) {
+            synchronized (WifiHandler.class) {
+                if (instance == null) {
+                    instance = new WifiHandler(applicationContext);
+                }
+            }
+        }
+        return instance;
+    }
+
+    private WifiHandler(Context applicationContext) {
         wifiManager = (WifiManager) applicationContext.getApplicationContext().getSystemService(WIFI_SERVICE);
     }
 

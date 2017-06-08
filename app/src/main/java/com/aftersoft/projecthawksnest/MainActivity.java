@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
             scannerView.startCamera();
         }
 
-        WifiHandler wifiHandler = new WifiHandler(getApplicationContext());
+        WifiHandler wifiHandler = WifiHandler.getInstance(getApplicationContext());
     }
 
     @Override
@@ -58,6 +58,9 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     protected void onPause() {
         super.onPause();
         scannerView.stopCamera();
+        if (wifiHandler != null) {
+            wifiHandler.forget();
+        }
     }
 
     @Override
