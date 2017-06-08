@@ -1,8 +1,6 @@
 package com.aftersoft.projecthawksnest;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-
+import java.io.File;
 import java.io.Serializable;
 
 /**
@@ -11,19 +9,19 @@ import java.io.Serializable;
 
 public class GalleryItem implements Serializable {
 
-    private byte[] photo;
+    private File photo;
     private boolean checked;
 
-    public GalleryItem(byte[] photo) {
+    public GalleryItem(File photo) {
         this.photo = photo;
         checked = false;
     }
 
-    public Bitmap getPhoto() {
-        return BitmapFactory.decodeByteArray(photo, 0, photo.length);
+    public File getPhoto() {
+        return photo;
     }
 
-    public void setPhoto(byte[] photo) {
+    public void setPhoto(File photo) {
         this.photo = photo;
     }
 
@@ -33,5 +31,9 @@ public class GalleryItem implements Serializable {
 
     public void setChecked(boolean checked) {
         this.checked = checked;
+    }
+
+    public void flipChecked() {
+        checked = !checked;
     }
 }
