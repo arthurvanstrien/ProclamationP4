@@ -5,16 +5,14 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.nfc.Tag;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.zxing.BarcodeFormat;
@@ -23,13 +21,7 @@ import com.google.zxing.client.result.WifiParsedResult;
 import com.google.zxing.client.result.WifiResultParser;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.List;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 

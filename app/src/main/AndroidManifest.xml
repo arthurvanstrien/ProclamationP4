@@ -26,7 +26,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".QRLoading" />
-        <activity android:name=".LiveViewActivity" />
+        <activity android:name=".LiveViewActivity"
+            android:screenOrientation="sensorLandscape"/>
         <activity android:name=".GalleryActivity" />
         <activity android:name=".DetailPhotoActivity" />
         <activity android:name=".QuitPopup" />

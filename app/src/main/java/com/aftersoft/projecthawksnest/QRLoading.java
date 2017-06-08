@@ -1,7 +1,7 @@
 package com.aftersoft.projecthawksnest;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.ProgressBar;
 
 public class QRLoading extends AppCompatActivity {

@@ -1,12 +1,10 @@
 package com.aftersoft.projecthawksnest;
 
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.hardware.Camera;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -31,7 +29,6 @@ public class LiveViewActivity extends AppCompatActivity implements Camera.Pictur
         Log.v(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_live_view);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         try {
             mCamera = Camera.open(Camera.CameraInfo.CAMERA_FACING_FRONT);
@@ -45,7 +42,8 @@ public class LiveViewActivity extends AppCompatActivity implements Camera.Pictur
             camera_view.addView(mCameraView);//add the SurfaceView to the layout
         }
 
-            findViewById(R.id.activityLiveView_fab_toGallery).setOnClickListener(this);
+        findViewById(R.id.activityLiveView_fab_toGallery).setOnClickListener(this);
+        Log.v(TAG, "onCreate done");
     }
 
     /**
