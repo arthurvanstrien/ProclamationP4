@@ -2,7 +2,10 @@ package com.aftersoft.projecthawksnest;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Build;
@@ -12,6 +15,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
@@ -29,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     private boolean resultHandled;
     private WifiManager wifiManager;
     private int netId = -1;
+    private AlertDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +53,16 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         }
 
         wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        View mView = getLayoutInflater().inflate(R.layout.activity_qrloading, null);
+        builder.setView(mView);
+        dialog = builder.create();
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        WindowManager.LayoutParams wmlp = dialog.getWindow().getAttributes();
+        wmlp.y = (int) (getResources().getDisplayMetrics().heightPixels * 0.3);
     }
 
     @Override
@@ -75,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
 
     @Override
     public void handleResult(Result result) {
+        dialog.show();
         resultHandled = true;
         Log.v(TAG, result.getText()); // Prints scan results
         Log.v(TAG, result.getBarcodeFormat().toString());

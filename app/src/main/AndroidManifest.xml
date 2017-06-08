@@ -24,13 +24,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".GalleryActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <activity android:name=".QRLoading"></activity>
+        <activity android:name=".GalleryActivity"></activity>
         <activity android:name=".DetailPhotoActivity"></activity>
     </application>
 
