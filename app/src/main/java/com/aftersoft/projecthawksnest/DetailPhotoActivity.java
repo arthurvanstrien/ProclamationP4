@@ -14,6 +14,8 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.ImageView;
 
+import java.io.ByteArrayOutputStream;
+
 public class DetailPhotoActivity extends AppCompatActivity {
 
     private GalleryItem galleryItem;
