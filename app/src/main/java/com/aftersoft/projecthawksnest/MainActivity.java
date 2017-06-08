@@ -1,6 +1,7 @@
 package com.aftersoft.projecthawksnest;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -50,6 +51,9 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
             requestPermissions(new String[]{Manifest.permission.CAMERA}, PERMISSIONS_REQUEST_ACCESS_CAMERA);
         } else {
             scannerView.startCamera();
+
+            Intent intent =  new Intent(getApplicationContext(),LiveViewActivity.class);
+            startActivity(intent);
         }
 
         WifiHandler wifiHandler = WifiHandler.getInstance(getApplicationContext());
@@ -108,6 +112,9 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         if (requestCode == PERMISSIONS_REQUEST_ACCESS_CAMERA) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 scannerView.startCamera();
+
+                Intent intent =  new Intent(getApplicationContext(),LiveViewActivity.class);
+                startActivity(intent);
             }
         }
     }
@@ -126,7 +133,4 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         AlertDialog.Builder BracketDialog =  new AlertDialog.Builder(this);
         BracketDialog.setTitle("Bracket Placement").setMessage("Place your phone inside of the bracket in front of you. Make sure your phone is fastened tightly.").show();
     }
-
-
-
 }
