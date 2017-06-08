@@ -43,7 +43,7 @@ public class LiveViewActivity extends AppCompatActivity implements Camera.Pictur
             camera_view.addView(mCameraView);//add the SurfaceView to the layout
         }
 
-        ((FloatingActionButton) findViewById(R.id.activityLiveView_fab_toGallery)).setOnClickListener(this);
+            findViewById(R.id.activityLiveView_fab_toGallery).setOnClickListener(this);
     }
 
     /**
