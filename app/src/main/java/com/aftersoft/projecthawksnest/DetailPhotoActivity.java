@@ -1,5 +1,7 @@
 package com.aftersoft.projecthawksnest;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -11,6 +13,8 @@ import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.widget.ImageView;
 
 import java.io.ByteArrayOutputStream;
@@ -18,12 +22,16 @@ import java.util.ArrayList;
 
 public class DetailPhotoActivity extends AppCompatActivity {
 
+    private GalleryItem galleryItem;
+    private int position;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_photo);
 
-        GalleryItem galleryItem = (GalleryItem) getIntent().getExtras().get("EXTRA");
+        galleryItem = (GalleryItem) getIntent().getExtras().get("EXTRA");
+        position = getIntent().getExtras().getInt("POSITION");
 
         ImageView imageView = (ImageView) findViewById(R.id.imageView);
 
@@ -55,5 +63,35 @@ public class DetailPhotoActivity extends AppCompatActivity {
 
         imageView.setImageBitmap(bitmap);
 
+        canvas.rotate(-90);
+
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+        byte[] data = stream.toByteArray();
+
+        galleryItem.setPhoto(data);
     }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)  {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            Log.i("fsdfsd", "fsdfsdf");
+            Intent intent = new Intent();
+            intent.putExtra("EXTRA", galleryItem);
+            intent.putExtra("POSITION", position);
+            setResult(Activity.RESULT_OK, intent);
+            finish();
+        }
+        return true;
+    }
+
+//    @Override
+//    public void onBackPressed() {
+//        Intent intent = new Intent();
+//        intent.putExtra("EXTRA", galleryItem);
+//        intent.putExtra("POSITION", position);
+//        setResult(Activity.RESULT_OK, intent);
+//        finish();
+//        super.onBackPressed();
+//    }
 }

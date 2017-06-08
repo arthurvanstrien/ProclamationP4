@@ -1,6 +1,9 @@
 package com.aftersoft.projecthawksnest;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -27,13 +30,16 @@ import java.util.ArrayList;
 
 public class GalleryActivity extends AppCompatActivity {
 
+    private ArrayList<GalleryItem> galleryItems;
+    private GridView gridView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gallery);
         makeTestItems();
-        final ArrayList<GalleryItem> galleryItems = getGallaryItems();
-        final GridView gridView = (GridView) this.findViewById(R.id.gridview);
+        galleryItems = getGallaryItems();
+        gridView = (GridView) this.findViewById(R.id.gridview);
         final Button nextButton = (Button) this.findViewById(R.id.next_button);
 
         ArrayAdapter gridViewAdapter = new GalleryAdapter(getApplicationContext(), galleryItems);
@@ -46,7 +52,7 @@ public class GalleryActivity extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(), DetailPhotoActivity.class);
                 intent.putExtra("EXTRA", galleryItems.get(position));
                 intent.putExtra("POSITION", position);
-                startActivity(intent);
+                startActivityForResult(intent, 1);
             }
         });
 
@@ -73,6 +79,17 @@ public class GalleryActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.i("fsdfsd", "fsdfsdf");
+                int position = data.getExtras().getInt("POSITION");
+                GalleryItem galleryItem = (GalleryItem) data.getExtras().get("EXTRA");
+
+                galleryItems.add(galleryItem);
+                gridView.invalidateViews();
     }
 
     public ArrayList<GalleryItem> getGallaryItems() {
