@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         super.onPause();
         scannerView.stopCamera();
         if (wifiHandler != null) {
-            wifiHandler.forget();
+//            wifiHandler.forget();
         }
     }
 
