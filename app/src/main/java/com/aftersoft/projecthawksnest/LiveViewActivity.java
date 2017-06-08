@@ -76,11 +76,11 @@ public class LiveViewActivity extends AppCompatActivity implements Camera.Pictur
                 }
             }
         }
+        mCamera.startPreview();
     }
 
     private void takePicture() {
         mCamera.takePicture(null, null, this);
-        // TODO: 2-6-2017 Reset preview
     }
 }
 
