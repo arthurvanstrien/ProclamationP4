@@ -1,12 +1,15 @@
 package com.aftersoft.projecthawksnest;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static android.content.Context.WIFI_SERVICE;
 
@@ -17,6 +20,9 @@ import static android.content.Context.WIFI_SERVICE;
 public class WifiHandler {
     private static volatile WifiHandler instance;
     private WifiManager wifiManager;
+    private ConnectivityManager connManager;
+    private WifiConfiguration wifiConfig;
+    private boolean connected;
     private int netId = -1;
     private List<WifiStateListener> wifiStateListeners = new ArrayList<>();
 
@@ -33,6 +39,7 @@ public class WifiHandler {
 
     private WifiHandler(Context applicationContext) {
         wifiManager = (WifiManager) applicationContext.getApplicationContext().getSystemService(WIFI_SERVICE);
+        connManager = (ConnectivityManager) applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE);
     }
 
     /**
@@ -48,15 +55,12 @@ public class WifiHandler {
         Log.i("Connecting to", ssid);
         if (!networkEncryption.equals("WPA"))
             return false;
-        WifiConfiguration wifiConfig = new WifiConfiguration();
+        wifiConfig = new WifiConfiguration();
         wifiConfig.SSID = String.format("\"%s\"", ssid);
         wifiConfig.preSharedKey = String.format("\"%s\"", password);
         wifiConfig.hiddenSSID = hidden;
         wifiConfig.allowedProtocols.set(WifiConfiguration.Protocol.WPA);
         wifiConfig.allowedProtocols.set(WifiConfiguration.Protocol.RSN);
-
-        if (!wifiManager.isWifiEnabled())
-            wifiManager.setWifiEnabled(true);
 
         netId = wifiManager.addNetwork(wifiConfig);
 
@@ -67,32 +71,50 @@ public class WifiHandler {
         }
 
         wifiManager.enableNetwork(netId, true);
-        if (wifiManager.reconnect()) {
-            for (WifiStateListener wifiStateListener : wifiStateListeners) {
-                wifiStateListener.onConnected();
-            }
-            Log.i("Wifi connected: ", String.valueOf(wifiManager.getConnectionInfo()));
-            return true;
-        } else
-            return false;
+
+        return reconnect();
     }
 
     /**
      * Reconnect to the currently connected to network
      * @return returns true if the reconnection was successful
      */
+
+    int i = 0;
+
     public boolean reconnect() {
-        if (wifiManager.getConnectionInfo().getNetworkId() == netId) {
-            if (wifiManager.reconnect()) {
-                for (WifiStateListener wifiStateListener : wifiStateListeners) {
-                    wifiStateListener.onConnected();
+        connected = false;
+
+        final Timer timer = new Timer();
+
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                i++;
+                if (connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnected() && !connected) {
+                    if (wifiManager.getConnectionInfo().getSSID().equals(wifiConfig.SSID)) {
+                        for (WifiStateListener wifiStateListener : wifiStateListeners) {
+                            wifiStateListener.onConnected();
+                        }
+                        Log.i("Wifi connected: ", String.valueOf(wifiManager.getConnectionInfo()));
+                        connected = true;
+                        timer.cancel();
+                    }
                 }
-                Log.i("Wifi connected: ", String.valueOf(wifiManager.getConnectionInfo()));
-                return true;
-            } else
-                return false;
-        } else
-            return false;
+                Log.i("i: ", String.valueOf(i));
+                if (i == 5){
+                    if (!connected) {
+                        for (WifiStateListener wifiStateListener : wifiStateListeners) {
+                            wifiStateListener.onConnectedFail();
+                        }
+                    }
+                    timer.cancel();
+                }
+            }
+        };
+        timer.scheduleAtFixedRate(task, 0, 5000);
+
+        return connected;
     }
 
     public void disconnect() {
@@ -114,6 +136,7 @@ public class WifiHandler {
 
     public interface WifiStateListener {
         void onConnected();
+        void onConnectedFail();
         void onDisconnected();
     }
 

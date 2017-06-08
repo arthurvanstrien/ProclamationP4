@@ -120,10 +120,22 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
 
     @Override
     public void onConnected() {
+        dialog.cancel();
         scannerView.stopCameraPreview();
         scannerView.stopCamera();
-        Intent intent = new Intent(getApplicationContext(), LiveViewActivity.class);
-        startActivity(intent);
+        startActivity(new Intent(getApplicationContext(), LiveViewActivity.class));
+    }
+
+    @Override
+    public void onConnectedFail() {
+        dialog.cancel();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(scannerView.getContext(), "Verbinding maken mislukt", Toast.LENGTH_LONG).show();
+            }
+        });
+        scannerView.startCamera();
     }
 
     @Override
