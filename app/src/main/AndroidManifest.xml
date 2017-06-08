@@ -27,8 +27,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LiveViewActivity" />
         <activity android:name=".QRLoading" />
+        <activity android:name=".LiveViewActivity" />
+        <activity android:name=".GalleryActivity" />
+        <activity android:name=".DetailPhotoActivity" />
     </application>
 
 </manifest>
