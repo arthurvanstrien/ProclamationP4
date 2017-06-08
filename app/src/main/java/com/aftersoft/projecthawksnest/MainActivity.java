@@ -89,16 +89,14 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         if (requestCode == PERMISSIONS_REQUEST_ACCESS_CAMERA) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 scannerView.startCamera();
-
-                Intent intent =  new Intent(getApplicationContext(),LiveViewActivity.class);
-                startActivity(intent);
             }
         }
     }
 
     @Override
     public void onConnected() {
-
+        Intent intent =  new Intent(getApplicationContext(),LiveViewActivity.class);
+        startActivity(intent);
     }
 
     @Override

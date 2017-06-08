@@ -1,10 +1,7 @@
 package com.aftersoft.projecthawksnest;
 
-import android.Manifest;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.hardware.Camera;
-import android.os.Build;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
