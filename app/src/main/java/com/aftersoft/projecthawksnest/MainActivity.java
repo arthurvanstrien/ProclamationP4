@@ -1,7 +1,6 @@
 package com.aftersoft.projecthawksnest;
 
 import android.Manifest;
-import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -14,6 +13,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
@@ -120,12 +120,19 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     }
 
     @Override
-    public void onDisconnected() {
-
+    public void onConnectedFail() {
+        dialog.cancel();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(scannerView.getContext(), "Verbinding maken mislukt", Toast.LENGTH_LONG).show();
+            }
+        });
+        scannerView.startCamera();
     }
 
-    public void showBracketIntroduction(){
-        AlertDialog.Builder BracketDialog =  new AlertDialog.Builder(this);
-        BracketDialog.setTitle("Bracket Placement").setMessage("Place your phone inside of the bracket in front of you. Make sure your phone is fastened tightly.").show();
+    @Override
+    public void onDisconnected() {
+
     }
 }

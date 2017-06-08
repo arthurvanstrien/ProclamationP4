@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 import static android.content.Context.WIFI_SERVICE;
 
@@ -71,48 +74,41 @@ public class WifiHandler {
 
         wifiManager.enableNetwork(netId, true);
 
-        connected = false;
-
-        TimerTask task = new TimerTask() {
-            @Override
-            public void run() {
-                if (connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnected() && !connected) {
-                    for (WifiStateListener wifiStateListener : wifiStateListeners) {
-                        wifiStateListener.onConnected();
-                    }
-                    Log.i("Wifi connected: ", String.valueOf(wifiManager.getConnectionInfo()));
-                    connected = true;
-                }
-
-            }
-        };
-
-        Timer timer = new Timer(true);
-        timer.scheduleAtFixedRate(task, 0, 5000);
-
-        return connected;
+        return reconnect();
     }
 
     /**
      * Reconnect to the currently connected to network
      * @return returns true if the reconnection was successful
      */
+
+    int i = 0;
+
     public boolean reconnect() {
+        connected = false;
+
+        final Timer timer = new Timer();
+
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
-                if (connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnected() && !connected) {
+                i++;
+                if (connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnected() && !connected && wifiManager.getConnectionInfo().getNetworkId() == netId) {
                     for (WifiStateListener wifiStateListener : wifiStateListeners) {
                         wifiStateListener.onConnected();
                     }
                     Log.i("Wifi connected: ", String.valueOf(wifiManager.getConnectionInfo()));
                     connected = true;
                 }
-
+                Log.i("i: ", String.valueOf(i));
+                if (i == 3){
+                    for (WifiStateListener wifiStateListener : wifiStateListeners) {
+                        wifiStateListener.onConnectedFail();
+                    }
+                    timer.cancel();
+                }
             }
         };
-
-        Timer timer = new Timer(true);
         timer.scheduleAtFixedRate(task, 0, 5000);
 
         return connected;
@@ -137,6 +133,7 @@ public class WifiHandler {
 
     public interface WifiStateListener {
         void onConnected();
+        void onConnectedFail();
         void onDisconnected();
     }
 
