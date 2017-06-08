@@ -51,7 +51,6 @@ public class WifiHandler {
      * @return Returns true if the connection was successful
      */
     public boolean connect(String ssid, String password, String networkEncryption, boolean hidden) {
-        forget();
         Log.i("Connecting to", ssid);
         if (!networkEncryption.equals("WPA"))
             return false;
@@ -102,7 +101,7 @@ public class WifiHandler {
                     }
                 }
                 Log.i("i: ", String.valueOf(i));
-                if (i == 5){
+                if (i == 100000){
                     if (!connected) {
                         for (WifiStateListener wifiStateListener : wifiStateListeners) {
                             wifiStateListener.onConnectedFail();
@@ -112,7 +111,7 @@ public class WifiHandler {
                 }
             }
         };
-        timer.scheduleAtFixedRate(task, 0, 5000);
+        timer.scheduleAtFixedRate(task, 0, 100);
 
         return connected;
     }

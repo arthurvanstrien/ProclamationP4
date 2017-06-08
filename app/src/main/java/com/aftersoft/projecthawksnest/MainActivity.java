@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.nfc.Tag;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
@@ -42,8 +43,8 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.v(TAG, "onCreate");
         super.onCreate(savedInstanceState);
-
         scannerView = new ZXingScannerView(this);
         setContentView(scannerView);
         scannerView.setFormats(Collections.singletonList(BarcodeFormat.QR_CODE));
@@ -72,6 +73,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
 
     @Override
     protected void onResume() {
+        Log.v(TAG, "onResume");
         super.onResume();
         scannerView.setResultHandler(this);
         scannerView.startCamera();
@@ -79,6 +81,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
 
     @Override
     protected void onPause() {
+        Log.v(TAG, "onPause");
         super.onPause();
         scannerView.stopCamera();
         if (wifiHandler != null) {
@@ -88,6 +91,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
 
     @Override
     public void onBackPressed() {
+        Log.v(TAG, "onBackPressed");
         if (!resultHandled) {
             wifiHandler.forget();
             super.onBackPressed();
@@ -99,16 +103,17 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
 
     @Override
     public void handleResult(Result result) {
+        Log.v(TAG, "handleResult");
         dialog.show();
         resultHandled = true;
         Log.v(TAG, result.getText()); // Prints scan results
-        Log.v(TAG, result.getBarcodeFormat().toString());
         WifiParsedResult parsedResult = (WifiParsedResult) WifiResultParser.parseResult(result);
         wifiHandler.connect(parsedResult.getSsid(), parsedResult.getPassword(), parsedResult.getNetworkEncryption(), parsedResult.isHidden());
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        Log.v(TAG, "onRequestPermissionResult");
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         if (requestCode == PERMISSIONS_REQUEST_ACCESS_CAMERA) {
@@ -120,6 +125,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
 
     @Override
     public void onConnected() {
+        Log.v(TAG, "onConnected");
         dialog.cancel();
         scannerView.stopCameraPreview();
         scannerView.stopCamera();
@@ -128,6 +134,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
 
     @Override
     public void onConnectedFail() {
+        Log.v(TAG, "onConnectedFail");
         dialog.cancel();
         runOnUiThread(new Runnable() {
             @Override
@@ -140,6 +147,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
 
     @Override
     public void onDisconnected() {
+        Log.v(TAG, "onDisconnected");
 
     }
 

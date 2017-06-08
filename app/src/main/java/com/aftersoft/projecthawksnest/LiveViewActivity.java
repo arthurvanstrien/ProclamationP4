@@ -8,6 +8,7 @@ import android.hardware.Camera;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 
@@ -21,12 +22,13 @@ import java.util.Calendar;
  */
 
 public class LiveViewActivity extends AppCompatActivity implements Camera.PictureCallback, View.OnClickListener {
-
+    public final static String TAG = "LiveViewActivity";
     private static Camera mCamera = null;
     private CameraView mCameraView = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.v(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_live_view);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
@@ -51,16 +53,19 @@ public class LiveViewActivity extends AppCompatActivity implements Camera.Pictur
      */
     @Override
     public void onBackPressed() {
+        Log.v(TAG, "onBackPressed");
         takePicture();
     }
 
     @Override
     protected void onPause() {
+        Log.v(TAG, "onPause");
         super.onPause();
     }
 
     @Override
     public void onPictureTaken(byte[] data, Camera camera) {
+        Log.v(TAG, "onPictureTaken");
         if (data != null) {
             Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
             if (bitmap != null) {
@@ -83,11 +88,13 @@ public class LiveViewActivity extends AppCompatActivity implements Camera.Pictur
     }
 
     private void takePicture() {
+        Log.v(TAG, "takePicture");
         mCamera.takePicture(null, null, this);
     }
 
     @Override
     public void onClick(View v) {
+        Log.v(TAG, "onClick");
         startActivity(new Intent(this, GalleryActivity.class));
     }
 }
