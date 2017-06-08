@@ -2,6 +2,7 @@ package com.aftersoft.projecthawksnest;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.wifi.WifiConfiguration;
@@ -35,12 +36,18 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        AlertDialog.Builder builder1 = new AlertDialog.Builder(MainActivity.this);
+        final AlertDialog.Builder builder1 = new AlertDialog.Builder(MainActivity.this);
         LayoutInflater factory = getLayoutInflater();
         final View view = factory.inflate(R.layout.introduction, null);
         builder1.setTitle("Instructions");
         builder1.setView(view);
         builder1.setMessage("Scan the QR-code near your seat by positioning the code within the rectangle.");
+        builder1.setNeutralButton("I understand", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
         builder1.show();
         scannerView = new ZXingScannerView(this);
         setContentView(scannerView);
