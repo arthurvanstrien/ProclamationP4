@@ -19,6 +19,8 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
 import com.google.zxing.client.result.WifiParsedResult;
 import com.google.zxing.client.result.WifiResultParser;
+
+import java.io.File;
 import java.util.Collections;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
@@ -104,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 scannerView.startCamera();
 
-                Intent intent =  new Intent(getApplicationContext(),LiveViewActivity.class);
+                Intent intent = new Intent(getApplicationContext(), LiveViewActivity.class);
                 startActivity(intent);
             }
         }
@@ -114,7 +116,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     public void onConnected() {
         scannerView.stopCameraPreview();
         scannerView.stopCamera();
-        Intent intent =  new Intent(getApplicationContext(),LiveViewActivity.class);
+        Intent intent = new Intent(getApplicationContext(), LiveViewActivity.class);
         startActivity(intent);
     }
 
@@ -123,8 +125,16 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
 
     }
 
-    public void showBracketIntroduction(){
-        AlertDialog.Builder BracketDialog =  new AlertDialog.Builder(this);
+    public void showBracketIntroduction() {
+        AlertDialog.Builder BracketDialog = new AlertDialog.Builder(this);
         BracketDialog.setTitle("Bracket Placement").setMessage("Place your phone inside of the bracket in front of you. Make sure your phone is fastened tightly.").show();
+    }
+
+    public boolean hasUsableSpace() {
+        File imagesFolder = new File(getFilesDir(), "images");
+        if (imagesFolder.getUsableSpace() >= 104857600)
+        return true;
+
+        return false;
     }
 }
