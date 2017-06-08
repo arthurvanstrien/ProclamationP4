@@ -39,11 +39,13 @@ public class GalleryActivity extends AppCompatActivity {
         ArrayAdapter gridViewAdapter = new GalleryAdapter(getApplicationContext(), galleryItems);
 
         gridView.setAdapter(gridViewAdapter);
+
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getApplicationContext(), DetailPhotoActivity.class);
                 intent.putExtra("EXTRA", galleryItems.get(position));
+                intent.putExtra("POSITION", position);
                 startActivity(intent);
             }
         });
@@ -76,7 +78,6 @@ public class GalleryActivity extends AppCompatActivity {
     public ArrayList<GalleryItem> getGallaryItems() {
         ArrayList<GalleryItem> galleryItems = new ArrayList<>();
         File imagesFolder = new File(getFilesDir(), "images");
-
         if (!imagesFolder.exists())
             return galleryItems;
 
@@ -100,7 +101,7 @@ public class GalleryActivity extends AppCompatActivity {
     public void makeTestItems() {
         for (int count = 0; count < 10; count++){
             Resources res = getResources();
-            Drawable drawable = res.getDrawable(R.drawable.checked_image);
+            Drawable drawable = res.getDrawable(R.drawable.image);
             Bitmap bitmap = ((BitmapDrawable)drawable).getBitmap();
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
