@@ -20,7 +20,11 @@ public class GalleryItem implements Serializable {
     }
 
     public Bitmap getPhoto() {
-        return BitmapFactory.decodeByteArray(photo, 0, photo.length);
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = false;
+        options.inPreferredConfig = Bitmap.Config.RGB_565;
+        options.inDither = true;
+        return BitmapFactory.decodeByteArray(photo, 0, photo.length, options);
     }
 
     public void setPhoto(byte[] photo) {
