@@ -3,6 +3,8 @@ package com.aftersoft.projecthawksnest;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
@@ -33,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     private ZXingScannerView scannerView;
     private boolean resultHandled;
     private WifiHandler wifiHandler;
+    private AlertDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         }
 
         wifiHandler = WifiHandler.getInstance(getApplicationContext());
+        wifiHandler.addOnWifiStateListener(this);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         View mView = getLayoutInflater().inflate(R.layout.activity_qrloading, null);
@@ -82,6 +86,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     @Override
     public void onBackPressed() {
         if (!resultHandled) {
+            wifiHandler.forget();
             super.onBackPressed();
         } else {
             resultHandled = false;

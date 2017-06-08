@@ -54,6 +54,7 @@ public class LiveViewActivity extends AppCompatActivity implements Camera.Pictur
     @Override
     protected void onPause() {
         super.onPause();
+        mCamera.release();
     }
 
     @Override
