@@ -42,21 +42,19 @@ public class GalleryActivity extends AppCompatActivity {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                GalleryItem galleryItem = galleryItems.get(position);
-                Log.i("Test", "" + galleryItem.isChecked());
-                galleryItem.setChecked(!galleryItem.isChecked());
-                galleryItems.set(position, galleryItem);
-                Log.i("Test", "" + galleryItem.isChecked());
-                gridView.invalidateViews();
+                Intent intent = new Intent(getApplicationContext(), DetailPhotoActivity.class);
+                intent.putExtra("EXTRA", galleryItems.get(position));
+                startActivity(intent);
             }
         });
 
         gridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(getApplicationContext(), DetailPhotoActivity.class);
-                intent.putExtra("EXTRA", galleryItems.get(position));
-                startActivity(intent);
+                GalleryItem galleryItem = galleryItems.get(position);
+                galleryItem.setChecked(!galleryItem.isChecked());
+                galleryItems.set(position, galleryItem);
+                gridView.invalidateViews();
                 return true;
             }
         });
@@ -65,14 +63,11 @@ public class GalleryActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 File imagesFolder = new File(getFilesDir(), "images");
-                Log.i("Tets", "Files:" + imagesFolder.listFiles().length);
                 for (int count = imagesFolder.listFiles().length - 1; count > -1; count--) {
                     if (!galleryItems.get(count).isChecked()){
                         imagesFolder.listFiles()[count].delete();
-                        Log.i("Tets", "Verwijderd:" + count);
                     }
                 }
-                Log.i("Tets", "Files:" + imagesFolder.listFiles().length);
             }
         });
 
