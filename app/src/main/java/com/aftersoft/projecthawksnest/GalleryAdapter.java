@@ -67,10 +67,8 @@ public class GalleryAdapter extends BaseAdapter {
         ImageView imageViewCheck = (ImageView) convertView.findViewById(R.id.imageView_check);
         if (((GalleryItem) getItem(position)).isChecked()) {
             imageViewCheck.setVisibility(View.VISIBLE);
-            Log.v(String.valueOf(position), "visible");
         } else {
             imageViewCheck.setVisibility(View.INVISIBLE);
-            Log.v(String.valueOf(position), "invisible");
         }
         return convertView;
     }

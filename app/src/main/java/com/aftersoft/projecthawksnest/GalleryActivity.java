@@ -2,7 +2,9 @@ package com.aftersoft.projecthawksnest;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
@@ -10,6 +12,7 @@ import android.widget.Button;
 import android.widget.GridView;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,12 +53,18 @@ public class GalleryActivity extends AppCompatActivity {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                File imagesFolder = new File(getFilesDir(), "images");
-                for (int count = imagesFolder.listFiles().length - 1; count > -1; count--) {
-                    if (galleryItems.get(count).isChecked()){
-                        // TODO: 8-6-2017 copy image to DCIM
+                Log.v("GalleryActivity", "nextButton.setOnClickListener");
+                File imagesFolderTemp = new File(getFilesDir(), "images");
+                File imagesFolder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getPath()+"/CoasterCam");
+                imagesFolder.mkdirs();
+                for (int count = imagesFolderTemp.listFiles().length - 1; count > -1; count--) {
+                    GalleryItem image = galleryItems.get(count);
+                    File imageFile = image.getPhoto();
+                    if (image.isChecked()){
+                        File dest = new File(imagesFolder.getPath(), String.valueOf(image.hashCode())+".jpg");
+                        FileOps.copyFileOrDirectory(imageFile, dest);
                     }
-                    imagesFolder.listFiles()[count].delete();
+                    imagesFolderTemp.listFiles()[count].delete();
                 }
             }
         });
