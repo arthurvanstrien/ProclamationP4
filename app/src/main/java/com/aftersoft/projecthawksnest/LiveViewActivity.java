@@ -3,6 +3,11 @@ package com.aftersoft.projecthawksnest;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -46,6 +51,45 @@ public class LiveViewActivity extends AppCompatActivity implements Camera.Pictur
         Log.v(TAG, "onCreate done");
     }
 
+    public Bitmap addData(Bitmap bitmap) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(90);
+        Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap,
+                0,
+                0,
+                bitmap.getWidth(),
+                bitmap.getHeight(),
+                matrix, true);
+
+        Typeface plain = Typeface.createFromAsset(getAssets(), "fonts/DK Jambo.ttf");
+        Paint paintText = new Paint();
+        Paint paint = new Paint();
+        paintText.setTypeface(plain);
+        paintText.setColor(Color.WHITE);
+        paintText.setAntiAlias(true);
+        paintText.setTextSize(64);
+        paint.setColor(Color.argb(255 / 2, 0, 0, 0));
+
+        Bitmap bitmapEdited = rotatedBitmap.copy(Bitmap.Config.ARGB_8888, true);
+
+        Canvas canvas = new Canvas(bitmapEdited);
+        canvas.rotate(90);
+        canvas.drawRect(0, -170, 400, 0, paint);
+        canvas.drawText("G-Kracht: ...", 20, -20, paintText);
+        canvas.drawText("Essteling", 20, -100, paintText);
+
+        matrix = new Matrix();
+        matrix.postRotate(-90);
+
+        return Bitmap.createBitmap(bitmapEdited,
+                                    0,
+                                    0,
+                                    bitmapEdited.getWidth(),
+                                    bitmapEdited.getHeight(),
+                                    matrix,
+                                    true);
+    }
+
     /**
      * For the time being a picture will be taken on back press.
      */
@@ -67,6 +111,7 @@ public class LiveViewActivity extends AppCompatActivity implements Camera.Pictur
         if (data != null) {
             Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
             if (bitmap != null) {
+                bitmap = addData(bitmap);
                 File imagesFolder = new File(getFilesDir(), "images");
                 imagesFolder.mkdirs();
                 String imageName = Calendar.getInstance().getTime().toString();
