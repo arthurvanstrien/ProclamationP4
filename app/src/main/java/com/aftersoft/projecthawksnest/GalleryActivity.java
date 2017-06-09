@@ -66,6 +66,10 @@ public class GalleryActivity extends AppCompatActivity {
                     }
                     imagesFolderTemp.listFiles()[count].delete();
                 }
+
+                Intent intent = new Intent(GalleryActivity.this, MainActivity.class );
+                intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP );
+                startActivity(intent);
             }
         });
 
