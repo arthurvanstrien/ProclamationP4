@@ -35,20 +35,28 @@ public class LiveViewActivity extends AppCompatActivity implements Camera.Pictur
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_live_view);
 
-        try {
-            mCamera = Camera.open(Camera.CameraInfo.CAMERA_FACING_FRONT);
-        } catch (RuntimeException e) {
-            e.printStackTrace();
-        }
-
-        if (mCamera != null) {
-            mCameraView = new CameraView(this, mCamera);//create a SurfaceView to show camera data
-            FrameLayout camera_view = (FrameLayout) findViewById(R.id.camera_view);
-            camera_view.addView(mCameraView);//add the SurfaceView to the layout
+        if (mCamera == null) {
+            if (mCameraView == null) {
+                mCameraView = new CameraView(this);//create a SurfaceView to show camera data
+                FrameLayout camera_view = (FrameLayout) findViewById(R.id.camera_view);
+                camera_view.addView(mCameraView);//add the SurfaceView to the layout
+            }
+            mCamera = mCameraView.getmCamera();
         }
 
         findViewById(R.id.activityLiveView_fab_toGallery).setOnClickListener(this);
-        Log.v(TAG, "onCreate done");
+    }
+
+    @Override
+    protected void onPause() {
+        Log.v(TAG, "onPause");
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        Log.v(TAG, "onResume");
+        super.onResume();
     }
 
     public Bitmap addData(Bitmap bitmap) {
@@ -97,12 +105,6 @@ public class LiveViewActivity extends AppCompatActivity implements Camera.Pictur
     public void onBackPressed() {
         Log.v(TAG, "onBackPressed");
         takePicture();
-    }
-
-    @Override
-    protected void onPause() {
-        Log.v(TAG, "onPause");
-        super.onPause();
     }
 
     @Override

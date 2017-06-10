@@ -35,8 +35,7 @@ public class GalleryAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        File imagesFolder = new File(fileDir, "images");
-        return imagesFolder.listFiles().length;
+        return galleryItems.size();
     }
 
     @Override
