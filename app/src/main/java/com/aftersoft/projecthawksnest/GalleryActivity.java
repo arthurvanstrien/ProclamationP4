@@ -1,11 +1,16 @@
 package com.aftersoft.projecthawksnest;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -92,5 +97,30 @@ public class GalleryActivity extends AppCompatActivity {
             galleryItems.add(new GalleryItem(imagesFolder.listFiles()[count]));
         }
         return galleryItems;
+    }
+
+    @Override
+    public void onBackPressed() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                AlertDialog.Builder builder = new AlertDialog.Builder(GalleryActivity.this);
+                View mView = getLayoutInflater().inflate(R.layout.quitpopup, null);
+                builder.setView(mView);
+                AlertDialog dialog = builder.create();
+                dialog.setCanceledOnTouchOutside(false);
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        GalleryActivity.super.onBackPressed();
+                    }
+                });
+
+                WindowManager.LayoutParams wmlp = dialog.getWindow().getAttributes();
+                wmlp.y = (int) (getResources().getDisplayMetrics().heightPixels * 0.3);
+                dialog.show();
+            }
+        });
     }
 }
