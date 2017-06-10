@@ -26,7 +26,6 @@ import java.util.Calendar;
 
 public class LiveViewActivity extends AppCompatActivity implements Camera.PictureCallback, View.OnClickListener {
     public final static String TAG = "LiveViewActivity";
-    private static Camera mCamera = null;
     private CameraView mCameraView = null;
 
     @Override
@@ -35,14 +34,9 @@ public class LiveViewActivity extends AppCompatActivity implements Camera.Pictur
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_live_view);
 
-        if (mCamera == null) {
-            if (mCameraView == null) {
-                mCameraView = new CameraView(this);//create a SurfaceView to show camera data
-                FrameLayout camera_view = (FrameLayout) findViewById(R.id.camera_view);
-                camera_view.addView(mCameraView);//add the SurfaceView to the layout
-            }
-            mCamera = mCameraView.getmCamera();
-        }
+        mCameraView = new CameraView(this);//create a SurfaceView to show camera data
+        FrameLayout camera_view = (FrameLayout) findViewById(R.id.camera_view);
+        camera_view.addView(mCameraView);//add the SurfaceView to the layout
 
         findViewById(R.id.activityLiveView_fab_toGallery).setOnClickListener(this);
     }
@@ -129,12 +123,12 @@ public class LiveViewActivity extends AppCompatActivity implements Camera.Pictur
                 }
             }
         }
-        mCamera.startPreview();
+        mCameraView.getmCamera().startPreview();
     }
 
     private void takePicture() {
         Log.v(TAG, "takePicture");
-        mCamera.takePicture(null, null, this);
+        mCameraView.getmCamera().takePicture(null, null, this);
     }
 
     @Override
