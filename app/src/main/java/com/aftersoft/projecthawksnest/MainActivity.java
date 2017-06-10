@@ -1,6 +1,7 @@
 package com.aftersoft.projecthawksnest;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -63,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         wmlp.y = (int) (getResources().getDisplayMetrics().heightPixels * 0.3);
 
 //        Uncomment line below to skip QR-Code
-        onConnected();
+//        onConnected();
     }
 
     @Override
@@ -124,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         dialog.cancel();
         scannerView.stopCameraPreview();
         scannerView.stopCamera();
-        startActivity(new Intent(getApplicationContext(), LiveViewActivity.class));
+        showBracketIntroduction();
     }
 
     @Override
@@ -135,9 +136,9 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
             @Override
             public void run() {
                 Toast.makeText(scannerView.getContext(), "Verbinding maken mislukt", Toast.LENGTH_LONG).show();
+                scannerView.resumeCameraPreview(MainActivity.this);
             }
         });
-        scannerView.startCamera();
     }
 
     @Override
@@ -147,15 +148,27 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     }
 
     public void showBracketIntroduction() {
-        AlertDialog.Builder BracketDialog = new AlertDialog.Builder(this);
-        BracketDialog.setTitle("Bracket Placement").setMessage("Place your phone inside of the bracket in front of you. Make sure your phone is fastened tightly.").show();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                new AlertDialog.Builder(MainActivity.this)
+                        .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                            @Override
+                            public void onDismiss(DialogInterface dialog) {
+                                startActivity(new Intent(getApplicationContext(), LiveViewActivity.class));
+                            }
+                        })
+                        .setTitle("Bracket Placement").setMessage("Place your phone inside of the bracket in front of you. Make sure your phone is fastened tightly.")
+                        .show();
+            }
+        });
     }
 
     public boolean hasUsableSpace() {
         File imagesFolder = new File(getFilesDir(), "images");
         if (imagesFolder.getUsableSpace() >= 104857600)
-        return true;
-
-        return false;
+            return true;
+        else
+            return false;
     }
 }
