@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         final AlertDialog.Builder builder1 = new AlertDialog.Builder(MainActivity.this);
         LayoutInflater factory = getLayoutInflater();
         final View view = factory.inflate(R.layout.introduction, null);
-        builder1.setTitle("Instructions");
+        builder1.setTitle("Bracket Instructions");
         builder1.setView(view);
         builder1.setMessage("Scan the QR-code near your seat by positioning the code within the rectangle.");
         builder1.setNeutralButton("I understand", new DialogInterface.OnClickListener() {
