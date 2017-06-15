@@ -45,7 +45,7 @@ public class LiveViewActivity extends AppCompatActivity implements Camera.Pictur
             public void hasError() {
 
             }
-        })
+        });
 
         mCameraView = new CameraView(this);//create a SurfaceView to show camera data
         FrameLayout camera_view = (FrameLayout) findViewById(R.id.camera_view);
