@@ -1,43 +1,54 @@
 package com.aftersoft.projecthawksnest;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
+import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiManager;
 import android.os.Build;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.view.WindowManager;
-import android.widget.Toast;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
 import com.google.zxing.client.result.WifiParsedResult;
 import com.google.zxing.client.result.WifiResultParser;
 
-import java.io.File;
 import java.util.Collections;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
-public class MainActivity extends AppCompatActivity implements ZXingScannerView.ResultHandler, WifiHandler.WifiStateListener {
+public class MainActivity extends AppCompatActivity implements ZXingScannerView.ResultHandler {
     public final static String TAG = "MainActivity";
     private static final int PERMISSIONS_REQUEST_ACCESS_CAMERA = 0;
     private ZXingScannerView scannerView;
     private boolean resultHandled;
-    private WifiHandler wifiHandler;
-    private AlertDialog dialog;
+    private WifiManager wifiManager;
+    private int netId = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.v(TAG, "onCreate");
         super.onCreate(savedInstanceState);
+        final AlertDialog.Builder builder1 = new AlertDialog.Builder(MainActivity.this);
+        LayoutInflater factory = getLayoutInflater();
+        final View view = factory.inflate(R.layout.introduction, null);
+        builder1.setTitle("Bracket Instructions");
+        builder1.setView(view);
+        builder1.setMessage("Scan the QR-code near your seat by positioning the code within the rectangle.");
+        builder1.setNeutralButton("I understand", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder1.show();
         scannerView = new ZXingScannerView(this);
         setContentView(scannerView);
         scannerView.setFormats(Collections.singletonList(BarcodeFormat.QR_CODE));
@@ -50,26 +61,11 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
             scannerView.startCamera();
         }
 
-        wifiHandler = WifiHandler.getInstance(getApplicationContext());
-        wifiHandler.addOnWifiStateListener(this);
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        View mView = getLayoutInflater().inflate(R.layout.activity_qrloading, null);
-        builder.setView(mView);
-        dialog = builder.create();
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-        WindowManager.LayoutParams wmlp = dialog.getWindow().getAttributes();
-        wmlp.y = (int) (getResources().getDisplayMetrics().heightPixels * 0.3);
-
-//        Uncomment line below to skip QR-Code
-        onConnected();
+        wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
     }
 
     @Override
     protected void onResume() {
-        Log.v(TAG, "onResume");
         super.onResume();
         scannerView.setResultHandler(this);
         scannerView.startCamera();
@@ -77,19 +73,15 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
 
     @Override
     protected void onPause() {
-        Log.v(TAG, "onPause");
         super.onPause();
         scannerView.stopCamera();
-        if (wifiHandler != null) {
-//            wifiHandler.forget();
-        }
+        if (netId >= 0)
+            wifiManager.removeNetwork(netId);
     }
 
     @Override
     public void onBackPressed() {
-        Log.v(TAG, "onBackPressed");
         if (!resultHandled) {
-            wifiHandler.forget();
             super.onBackPressed();
         } else {
             resultHandled = false;
@@ -99,17 +91,15 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
 
     @Override
     public void handleResult(Result result) {
-        Log.v(TAG, "handleResult");
-        dialog.show();
         resultHandled = true;
         Log.v(TAG, result.getText()); // Prints scan results
+        Log.v(TAG, result.getBarcodeFormat().toString());
         WifiParsedResult parsedResult = (WifiParsedResult) WifiResultParser.parseResult(result);
-        wifiHandler.connect(parsedResult.getSsid(), parsedResult.getPassword(), parsedResult.getNetworkEncryption(), parsedResult.isHidden());
+        connectToWifi(parsedResult.getSsid(), parsedResult.getPassword(), parsedResult.getNetworkEncryption(), parsedResult.isHidden());
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        Log.v(TAG, "onRequestPermissionResult");
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         if (requestCode == PERMISSIONS_REQUEST_ACCESS_CAMERA) {
@@ -119,56 +109,27 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         }
     }
 
-    @Override
-    public void onConnected() {
-        Log.v(TAG, "onConnected");
-        dialog.cancel();
-        scannerView.stopCameraPreview();
-        scannerView.stopCamera();
-        showBracketIntroduction();
-    }
+    private void connectToWifi(String ssid, String password, String networkEncryption, boolean hidden) {
+        Log.i("Connecting to", ssid);
+        if (!networkEncryption.equals("WPA"))
+            return;
+        WifiConfiguration wifiConfig = new WifiConfiguration();
+        wifiConfig.SSID = String.format("\"%s\"", ssid);
+        wifiConfig.preSharedKey = String.format("\"%s\"", password);
+        wifiConfig.hiddenSSID = hidden;
+        wifiConfig.allowedProtocols.set(WifiConfiguration.Protocol.WPA);
+        wifiConfig.allowedProtocols.set(WifiConfiguration.Protocol.RSN);
 
-    @Override
-    public void onConnectedFail() {
-        Log.v(TAG, "onConnectedFail");
-        dialog.cancel();
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(scannerView.getContext(), "Verbinding maken mislukt", Toast.LENGTH_LONG).show();
-                scannerView.resumeCameraPreview(MainActivity.this);
-            }
-        });
-    }
+        netId = wifiManager.addNetwork(wifiConfig);
 
-    @Override
-    public void onDisconnected() {
-        Log.v(TAG, "onDisconnected");
+        if (wifiManager.isWifiEnabled()) {
+            wifiManager.disconnect();
+        } else {
+            wifiManager.setWifiEnabled(true);
+        }
 
-    }
-
-    public void showBracketIntroduction() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                new AlertDialog.Builder(MainActivity.this)
-                        .setOnDismissListener(new DialogInterface.OnDismissListener() {
-                            @Override
-                            public void onDismiss(DialogInterface dialog) {
-                                startActivity(new Intent(getApplicationContext(), LiveViewActivity.class));
-                            }
-                        })
-                        .setTitle("Bracket Placement").setMessage("Place your phone inside of the bracket in front of you. Make sure your phone is fastened tightly.")
-                        .show();
-            }
-        });
-    }
-
-    public boolean hasUsableSpace() {
-        File imagesFolder = new File(getFilesDir(), "images");
-        if (imagesFolder.getUsableSpace() >= 104857600)
-            return true;
-        else
-            return false;
+        wifiManager.enableNetwork(netId, true);
+        wifiManager.reconnect();
+        Log.i("Wifi connected: ", String.valueOf(wifiManager.getConnectionInfo()));
     }
 }

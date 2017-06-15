@@ -101,6 +101,7 @@ public class GalleryActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        startActivity(new Intent(this, QuitPopup.class));
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
