@@ -10,5 +10,5 @@
         android:id="@+id/imageView3"
         android:layout_width="368dp"
         android:layout_height="193dp"
-        app:srcCompat="@mipmap/bracketpicture" />
+        app:srcCompat="@drawable/qrreader" />
 </LinearLayout>
