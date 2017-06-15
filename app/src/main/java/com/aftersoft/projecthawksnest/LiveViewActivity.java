@@ -27,12 +27,25 @@ import java.util.Calendar;
 public class LiveViewActivity extends AppCompatActivity implements Camera.PictureCallback, View.OnClickListener {
     public final static String TAG = "LiveViewActivity";
     private CameraView mCameraView = null;
-
+    private double force;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.v(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_live_view);
+
+        DataAsyncTask dataAsyncTask = new DataAsyncTask(new DataTaskListener() {
+            @Override
+            public void onGetDone(Double xAxis, Double yAxis, Double zAxis) {
+                double tempForce = Math.sqrt(Math.pow(xAxis, 2) + Math.pow(yAxis, 2));
+                force = Math.sqrt(Math.pow(tempForce, 2) + Math.pow(zAxis, 2));
+            }
+
+            @Override
+            public void hasError() {
+
+            }
+        })
 
         mCameraView = new CameraView(this);//create a SurfaceView to show camera data
         FrameLayout camera_view = (FrameLayout) findViewById(R.id.camera_view);
@@ -79,7 +92,7 @@ public class LiveViewActivity extends AppCompatActivity implements Camera.Pictur
         Canvas canvas = new Canvas(bitmapEdited);
 //        canvas.rotate(90);
 //        canvas.drawRect(0, -170, 400, 0, paint);
-        canvas.drawText("G-Kracht: ...", 20, 140, paintText);
+        canvas.drawText("G-Kracht: " + force, 20, 140, paintText);
         canvas.drawText("Essteling", 20, 60, paintText);
 
 //        matrix = new Matrix();
