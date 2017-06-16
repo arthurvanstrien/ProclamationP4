@@ -84,6 +84,7 @@ public class GalleryActivity extends AppCompatActivity {
                                     .setNeutralButton("Okay", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
+                                            WifiHandler.getInstance(GalleryActivity.this).forget();
                                             Intent intent = new Intent(GalleryActivity.this, MainActivity.class );
                                             intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP );
                                             startActivity(intent);
@@ -108,6 +109,7 @@ public class GalleryActivity extends AppCompatActivity {
                                         .setNeutralButton("I'm sure", new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
+                                                WifiHandler.getInstance(GalleryActivity.this);
                                                 Intent intent = new Intent(GalleryActivity.this, MainActivity.class);
                                                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                                 startActivity(intent);
@@ -161,7 +163,9 @@ public class GalleryActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed() {}
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
 
     public int getTotalSelectedImages(){
         int count = 0;

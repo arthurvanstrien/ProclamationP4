@@ -20,6 +20,6 @@ public class ConnectionChangeListener extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService( Context.CONNECTIVITY_SERVICE );
         NetworkInfo wifiNetInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-            WifiHandler.getInstance(context).onConnectionChanged(wifiNetInfo);
+        WifiHandler.getInstance(context).onConnectionChanged(wifiNetInfo);
     }
 }
