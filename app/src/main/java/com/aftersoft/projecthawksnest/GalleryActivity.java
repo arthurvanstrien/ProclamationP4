@@ -3,8 +3,6 @@ package com.aftersoft.projecthawksnest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -12,16 +10,13 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.GridView;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 public class GalleryActivity extends AppCompatActivity {
     private ArrayList<GalleryItem> galleryItems;
@@ -81,6 +76,7 @@ public class GalleryActivity extends AppCompatActivity {
                             AlertDialog dialog = new AlertDialog.Builder(GalleryActivity.this)
                                     .setView(getLayoutInflater().inflate(R.layout.quitpopup, null))
                                     .setTitle("Photo saving")
+                                    .setCancelable(false)
                                     .setNeutralButton("Okay", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
@@ -115,6 +111,7 @@ public class GalleryActivity extends AppCompatActivity {
                                                 startActivity(intent);
                                             }
                                         })
+                                        .setCancelable(false)
                                         .setNegativeButton("No i'm not", null);
 
                                 if (galleryItems.size() > 1)

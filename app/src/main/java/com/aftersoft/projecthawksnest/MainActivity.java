@@ -1,16 +1,14 @@
 package com.aftersoft.projecthawksnest;
 
-import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Build;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
                 .setTitle("Scanning QR-Code")
                 .setView(view)
                 .setMessage("Scan the QR-code near your seat by positioning the code within the rectangle.")
+                .setCancelable(false)
                 .setNeutralButton("I understand", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
