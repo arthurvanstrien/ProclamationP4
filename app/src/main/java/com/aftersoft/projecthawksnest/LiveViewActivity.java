@@ -10,6 +10,7 @@ import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.hardware.Camera;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -27,26 +28,15 @@ import java.util.Calendar;
 public class LiveViewActivity extends AppCompatActivity implements Camera.PictureCallback, View.OnClickListener {
     public final static String TAG = "LiveViewActivity";
     private CameraView mCameraView = null;
+    private Handler handler = new Handler();
+    private String[] urls = new String[] {"http://192.168.4.1:8080"};
     private double force;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.v(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_live_view);
-
-        DataAsyncTask dataAsyncTask = new DataAsyncTask(new DataTaskListener() {
-            @Override
-            public void onGetDone(Double xAxis, Double yAxis, Double zAxis) {
-                double tempForce = Math.sqrt(Math.pow(xAxis, 2) + Math.pow(yAxis, 2));
-                force = Math.sqrt(Math.pow(tempForce, 2) + Math.pow(zAxis, 2));
-            }
-
-            @Override
-            public void hasError() {
-
-            }
-        });
-
+        handler.post(runnablecode);
         mCameraView = new CameraView(this);//create a SurfaceView to show camera data
         FrameLayout camera_view = (FrameLayout) findViewById(R.id.camera_view);
         camera_view.addView(mCameraView);//add the SurfaceView to the layout
@@ -151,8 +141,8 @@ public class LiveViewActivity extends AppCompatActivity implements Camera.Pictur
     }
 
     public void forceCheck(){
-        if(force>=3.0){
-            takePicture();}
+        if(force>=3.0 || force <= -3.0);
+            takePicture();
 
     }
 
@@ -164,15 +154,17 @@ public class LiveViewActivity extends AppCompatActivity implements Camera.Pictur
                 public void onGetDone(Double xAxis, Double yAxis, Double zAxis) {
                     double tempForce = Math.sqrt(Math.pow(xAxis, 2) + Math.pow(yAxis, 2));
                     force = Math.sqrt(Math.pow(tempForce, 2) + Math.pow(zAxis, 2));
-                    System.out.println(force);
+                    Log.i("Gijs", "" + force);
                     forceCheck();
+
+                    handler.postDelayed(runnablecode, 500);
                 }
 
                 @Override
                 public void hasError() {
 
                 }
-            });
+            }).execute(urls);
         }
 
     };

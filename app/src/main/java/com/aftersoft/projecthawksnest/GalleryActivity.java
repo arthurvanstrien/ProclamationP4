@@ -60,7 +60,8 @@ public class GalleryActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Log.v("GalleryActivity", "nextButton.setOnClickListener");
                 File imagesFolderTemp = new File(getFilesDir(), "images");
-                File imagesFolder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getPath()+"/CoasterCam");
+                File imagesFolder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "CoasterCam");
+               // File imagesFolder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getPath()+"/CoasterCam");
                 imagesFolder.mkdirs();
                 for (int count = imagesFolderTemp.listFiles().length - 1; count > -1; count--) {
                     GalleryItem image = galleryItems.get(count);
