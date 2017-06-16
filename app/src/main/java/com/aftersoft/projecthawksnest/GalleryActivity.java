@@ -36,6 +36,15 @@ public class GalleryActivity extends AppCompatActivity {
         final Button nextButton = (Button) this.findViewById(R.id.next_button);
         BaseAdapter gridViewAdapter = new GalleryAdapter(getFilesDir(), getApplicationContext(), galleryItems);
 
+        new AlertDialog.Builder(GalleryActivity.this)
+                .setMessage("Press and hold a photo to enlarge.")
+                .setNeutralButton("I understand", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
         gridView.setAdapter(gridViewAdapter);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
