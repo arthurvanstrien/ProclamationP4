@@ -6,7 +6,7 @@ package com.aftersoft.projecthawksnest;
 
 public interface DataTaskListener {
 
-    void onGetDone(Double xAxis, Double yAxis, Double zAxis);
-    void hasError();
+    void onDataReceived(Double xAxis, Double yAxis, Double zAxis);
+    void onExceptionThrown();
 
 }

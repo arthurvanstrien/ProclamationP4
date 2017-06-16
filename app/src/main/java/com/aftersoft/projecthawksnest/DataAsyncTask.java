@@ -68,17 +68,14 @@ public class DataAsyncTask extends AsyncTask<String,Void,String> {
     protected void onPostExecute(String s) {
         try {
             JSONObject jsonObject = new JSONObject(s);
-            Double xAxis = jsonObject.getDouble("xAxis");
-            Double yAxis = jsonObject.getDouble("yAxis");
-            Double zAxis = jsonObject.getDouble("zAxis");
-            listener.onGetDone(xAxis, yAxis, zAxis);
+            Double xAxis = Double.parseDouble(jsonObject.getString("xAxis"));
+            Double yAxis = Double.parseDouble(jsonObject.getString("yAxis"));
+            Double zAxis = Double.parseDouble(jsonObject.getString("zAxis"));
+            listener.onDataReceived(xAxis, yAxis, zAxis);
 
-        } catch (JSONException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-            listener.hasError();
+            listener.onExceptionThrown();
         }
-
     }
-
-
 }
