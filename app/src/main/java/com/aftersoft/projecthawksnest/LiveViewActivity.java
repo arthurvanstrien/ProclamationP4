@@ -170,6 +170,7 @@ public class LiveViewActivity extends AppCompatActivity implements Camera.Pictur
 
     @Override
     public void run() {
+        Log.i(TAG, "GET");
         new DataAsyncTask(LiveViewActivity.this).execute(urls);
     }
 }
