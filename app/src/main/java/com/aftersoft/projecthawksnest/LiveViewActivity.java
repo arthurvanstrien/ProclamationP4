@@ -1,15 +1,16 @@
 package com.aftersoft.projecthawksnest;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.hardware.Camera;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -33,12 +34,13 @@ public class LiveViewActivity extends AppCompatActivity implements Camera.Pictur
         Log.v(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_live_view);
-
-        mCameraView = new CameraView(this);//create a SurfaceView to show camera data
-        FrameLayout camera_view = (FrameLayout) findViewById(R.id.camera_view);
-        camera_view.addView(mCameraView);//add the SurfaceView to the layout
-
         findViewById(R.id.activityLiveView_fab_toGallery).setOnClickListener(this);
+
+        if (PermissionHandler.requestCameraPermsission(this)) {
+            mCameraView = new CameraView(this);//create a SurfaceView to show camera data
+            FrameLayout camera_view = (FrameLayout) findViewById(R.id.camera_view);
+            camera_view.addView(mCameraView);//add the SurfaceView to the layout
+        }
     }
 
     @Override
@@ -54,15 +56,6 @@ public class LiveViewActivity extends AppCompatActivity implements Camera.Pictur
     }
 
     public Bitmap addData(Bitmap bitmap) {
-//        Matrix matrix = new Matrix();
-//        matrix.postRotate(90);
-//        Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap,
-//                0,
-//                0,
-//                bitmap.getWidth(),
-//                bitmap.getHeight(),
-//                matrix, true);
-
         Typeface plain = Typeface.createFromAsset(getAssets(), "fonts/DK Jambo.ttf");
         Paint paintText = new Paint();
         Paint paint = new Paint();
@@ -72,24 +65,17 @@ public class LiveViewActivity extends AppCompatActivity implements Camera.Pictur
         paintText.setTextSize(64);
         paint.setColor(Color.argb(255 / 2, 0, 0, 0));
 
-//        Bitmap bitmapEdited = rotatedBitmap.copy(Bitmap.Config.ARGB_8888, true);
         Bitmap bitmapEdited = bitmap.copy(Bitmap.Config.ARGB_8888, true);
 
 
         Canvas canvas = new Canvas(bitmapEdited);
-//        canvas.rotate(90);
-//        canvas.drawRect(0, -170, 400, 0, paint);
         canvas.drawText("G-Kracht: ...", 20, 140, paintText);
         canvas.drawText("Essteling", 20, 60, paintText);
-
-//        matrix = new Matrix();
-//        matrix.postRotate(-90);
-
         return Bitmap.createBitmap(bitmapEdited,
-                                    0,
-                                    0,
-                                    bitmapEdited.getWidth(),
-                                    bitmapEdited.getHeight());
+                0,
+                0,
+                bitmapEdited.getWidth(),
+                bitmapEdited.getHeight());
     }
 
     /**
@@ -135,6 +121,21 @@ public class LiveViewActivity extends AppCompatActivity implements Camera.Pictur
     public void onClick(View v) {
         Log.v(TAG, "onClick");
         startActivity(new Intent(this, GalleryActivity.class));
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == PermissionHandler.PERMISSIONS_ALL) {
+            for (int i = 0; i < permissions.length; i++) {
+                if (grantResults[i] != PackageManager.PERMISSION_GRANTED)
+                    finishAffinity();
+            }
+        }
+        mCameraView = new CameraView(this);//create a SurfaceView to show camera data
+        FrameLayout camera_view = (FrameLayout) findViewById(R.id.camera_view);
+        camera_view.addView(mCameraView);//add the SurfaceView to the layout
     }
 }
 

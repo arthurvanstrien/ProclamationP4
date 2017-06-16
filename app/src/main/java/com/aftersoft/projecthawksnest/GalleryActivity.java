@@ -2,10 +2,12 @@ package com.aftersoft.projecthawksnest;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -78,6 +80,7 @@ public class GalleryActivity extends AppCompatActivity {
             }
         });
 
+        PermissionHandler.requestWriteExternalStoragePermission(this);
     }
 
     @Override
@@ -123,5 +126,19 @@ public class GalleryActivity extends AppCompatActivity {
                 dialog.show();
             }
         });
+    }
+
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == PermissionHandler.PERMISSIONS_ALL) {
+            for (int i = 0; i < permissions.length; i++) {
+                if (grantResults[i] != PackageManager.PERMISSION_GRANTED)
+                    finishAffinity();
+            }
+        }
     }
 }

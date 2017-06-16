@@ -23,13 +23,13 @@ import com.google.zxing.client.result.WifiParsedResult;
 import com.google.zxing.client.result.WifiResultParser;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
 public class MainActivity extends AppCompatActivity implements ZXingScannerView.ResultHandler, WifiHandler.WifiStateListener {
     public final static String TAG = "MainActivity";
-    private static final int PERMISSIONS_REQUEST_ACCESS_CAMERA = 0;
     private ZXingScannerView scannerView;
     private boolean resultHandled;
     private WifiHandler wifiHandler;
@@ -55,14 +55,10 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         setContentView(scannerView);
         scannerView.setFormats(Collections.singletonList(BarcodeFormat.QR_CODE));
         scannerView.setAutoFocus(true);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
-                checkSelfPermission(Manifest.permission.CAMERA)
-                        != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.CAMERA}, PERMISSIONS_REQUEST_ACCESS_CAMERA);
-        } else {
+
+        if (PermissionHandler.requestCameraPermsission(this)) {
             scannerView.startCamera();
         }
-
         wifiHandler = WifiHandler.getInstance(getApplicationContext());
         wifiHandler.addOnWifiStateListener(this);
 
@@ -77,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         wmlp.y = (int) (getResources().getDisplayMetrics().heightPixels * 0.3);
 
 //        Uncomment line below to skip QR-Code
-//        onConnected();
+        onConnected();
     }
 
     @Override
@@ -90,6 +86,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     @Override
     protected void onPause() {
         super.onPause();
+        qrLoadingDialog.dismiss();
         scannerView.stopCamera();
         if (wifiHandler != null) {
 //            wifiHandler.forget();
@@ -120,13 +117,13 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        if (requestCode == PERMISSIONS_REQUEST_ACCESS_CAMERA) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                scannerView.startCamera();
-            } else {
-                finishAffinity();
+        if (requestCode == PermissionHandler.PERMISSIONS_ALL) {
+            for (int i = 0; i < permissions.length; i++) {
+                if (grantResults[i] != PackageManager.PERMISSION_GRANTED)
+                    finishAffinity();
             }
         }
+        scannerView.startCamera();
     }
 
     @Override
