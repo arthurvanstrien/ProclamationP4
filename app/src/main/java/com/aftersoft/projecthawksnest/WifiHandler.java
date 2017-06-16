@@ -101,7 +101,7 @@ public class WifiHandler {
                     }
                 }
                 Log.i("i: ", String.valueOf(i));
-                if (i > 100){
+                if (i > 100000){
                     if (!connected) {
                         for (WifiStateListener wifiStateListener : wifiStateListeners) {
                             wifiStateListener.onConnectedFail();
