@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -38,7 +39,8 @@ public class PermissionHandler {
         return true;
     }
 
-    public static boolean requestCameraPermsission(Activity activity) {
+    public static boolean requestCameraPermission(Activity activity) {
+        Log.d("Requesting permission", "Camera");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
                 activity.checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             activity.requestPermissions(new String[]{Manifest.permission.CAMERA}, PERMISSION_CAMERA);

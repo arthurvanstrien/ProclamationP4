@@ -84,6 +84,11 @@ public class GalleryActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable("galleryItems", galleryItems);
@@ -134,7 +139,7 @@ public class GalleryActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        if (requestCode == PermissionHandler.PERMISSIONS_ALL) {
+        if (requestCode == PermissionHandler.PERMISSION_WRITE_EXTERNAL_STORAGE) {
             for (int i = 0; i < permissions.length; i++) {
                 if (grantResults[i] != PackageManager.PERMISSION_GRANTED)
                     finishAffinity();

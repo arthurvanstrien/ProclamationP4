@@ -36,7 +36,7 @@ public class LiveViewActivity extends AppCompatActivity implements Camera.Pictur
         setContentView(R.layout.activity_live_view);
         findViewById(R.id.activityLiveView_fab_toGallery).setOnClickListener(this);
 
-        if (PermissionHandler.requestCameraPermsission(this)) {
+        if (PermissionHandler.requestCameraPermission(this)) {
             mCameraView = new CameraView(this);//create a SurfaceView to show camera data
             FrameLayout camera_view = (FrameLayout) findViewById(R.id.camera_view);
             camera_view.addView(mCameraView);//add the SurfaceView to the layout
@@ -127,12 +127,13 @@ public class LiveViewActivity extends AppCompatActivity implements Camera.Pictur
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        if (requestCode == PermissionHandler.PERMISSIONS_ALL) {
+        if (requestCode == PermissionHandler.PERMISSION_CAMERA) {
             for (int i = 0; i < permissions.length; i++) {
                 if (grantResults[i] != PackageManager.PERMISSION_GRANTED)
                     finishAffinity();
             }
         }
+
         mCameraView = new CameraView(this);//create a SurfaceView to show camera data
         FrameLayout camera_view = (FrameLayout) findViewById(R.id.camera_view);
         camera_view.addView(mCameraView);//add the SurfaceView to the layout

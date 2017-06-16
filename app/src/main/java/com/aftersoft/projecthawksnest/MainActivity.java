@@ -23,7 +23,6 @@ import com.google.zxing.client.result.WifiParsedResult;
 import com.google.zxing.client.result.WifiResultParser;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Collections;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
@@ -56,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         scannerView.setFormats(Collections.singletonList(BarcodeFormat.QR_CODE));
         scannerView.setAutoFocus(true);
 
-        if (PermissionHandler.requestCameraPermsission(this)) {
+        if (PermissionHandler.requestAllPermissions(this)) {
             scannerView.startCamera();
         }
         wifiHandler = WifiHandler.getInstance(getApplicationContext());
