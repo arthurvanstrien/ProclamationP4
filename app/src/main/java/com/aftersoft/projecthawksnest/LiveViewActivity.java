@@ -66,6 +66,7 @@ public class LiveViewActivity extends AppCompatActivity implements Camera.Pictur
 //                bitmap.getHeight(),
 //                matrix, true);
 
+
         Typeface plain = Typeface.createFromAsset(getAssets(), "fonts/DK Jambo.ttf");
         Paint paintText = new Paint();
         Paint paint = new Paint();
