@@ -154,20 +154,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     }
 
     public void showBracketIntroduction() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                new AlertDialog.Builder(MainActivity.this)
-                        .setOnDismissListener(new DialogInterface.OnDismissListener() {
-                            @Override
-                            public void onDismiss(DialogInterface dialog) {
-                                startActivity(new Intent(getApplicationContext(), LiveViewActivity.class));
-                            }
-                        })
-                        .setTitle("Bracket Placement").setMessage("Place your phone inside of the bracket in front of you. Make sure your phone is fastened tightly.")
-                        .show();
-            }
-        });
+        startActivity(new Intent(getApplicationContext(), LiveViewActivity.class));
     }
 
     public boolean hasUsableSpace() {
