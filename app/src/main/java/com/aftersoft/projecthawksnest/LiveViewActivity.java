@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.hardware.Camera;
@@ -25,23 +24,29 @@ import java.util.Calendar;
  * Created by Rick Verstraten on 1-6-2017.
  */
 
-public class LiveViewActivity extends AppCompatActivity implements Camera.PictureCallback, View.OnClickListener {
+public class LiveViewActivity extends AppCompatActivity implements Camera.PictureCallback, View.OnClickListener,
+        DataTaskListener, Runnable {
     public final static String TAG = "LiveViewActivity";
     private CameraView mCameraView = null;
-    private Handler handler = new Handler();
     private String[] urls = new String[] {"http://192.168.4.1:8080"};
-    private double force;
+    private double latestForce;
+    private int successivePictures;
+    private int nDataErrors;
+    private Handler pictureHandler;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.v(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_live_view);
-        handler.post(runnablecode);
         mCameraView = new CameraView(this);//create a SurfaceView to show camera data
         FrameLayout camera_view = (FrameLayout) findViewById(R.id.camera_view);
         camera_view.addView(mCameraView);//add the SurfaceView to the layout
 
         findViewById(R.id.activityLiveView_fab_toGallery).setOnClickListener(this);
+
+        pictureHandler = new Handler();
+        pictureHandler.post(this);
     }
 
     @Override
@@ -57,16 +62,6 @@ public class LiveViewActivity extends AppCompatActivity implements Camera.Pictur
     }
 
     public Bitmap addData(Bitmap bitmap) {
-//        Matrix matrix = new Matrix();
-//        matrix.postRotate(90);
-//        Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap,
-//                0,
-//                0,
-//                bitmap.getWidth(),
-//                bitmap.getHeight(),
-//                matrix, true);
-
-
         Typeface plain = Typeface.createFromAsset(getAssets(), "fonts/DK Jambo.ttf");
         Paint paintText = new Paint();
         Paint paint = new Paint();
@@ -76,18 +71,11 @@ public class LiveViewActivity extends AppCompatActivity implements Camera.Pictur
         paintText.setTextSize(64);
         paint.setColor(Color.argb(255 / 2, 0, 0, 0));
 
-//        Bitmap bitmapEdited = rotatedBitmap.copy(Bitmap.Config.ARGB_8888, true);
         Bitmap bitmapEdited = bitmap.copy(Bitmap.Config.ARGB_8888, true);
 
-
         Canvas canvas = new Canvas(bitmapEdited);
-//        canvas.rotate(90);
-//        canvas.drawRect(0, -170, 400, 0, paint);
-        canvas.drawText("G-Kracht: " + force, 20, 140, paintText);
+        canvas.drawText("G-Kracht: " + latestForce, 20, 140, paintText);
         canvas.drawText("Essteling", 20, 60, paintText);
-
-//        matrix = new Matrix();
-//        matrix.postRotate(-90);
 
         return Bitmap.createBitmap(bitmapEdited,
                                     0,
@@ -138,37 +126,50 @@ public class LiveViewActivity extends AppCompatActivity implements Camera.Pictur
     @Override
     public void onClick(View v) {
         Log.v(TAG, "onClick");
+        pictureHandler.removeCallbacks(this);
         startActivity(new Intent(this, GalleryActivity.class));
     }
 
-    public void forceCheck(){
-        if(force>=3.0 || force <= -3.0);
-            takePicture();
-
+    /**
+     * Check if the force hits the threshold
+     * @return returs true if the threshold has been hit
+     */
+    public boolean forceCheck(double force){
+        if(force >= 3.0d || force <= -3.0d)
+            return true;
+        return false;
     }
 
-    private Runnable runnablecode = new Runnable() {
-        @Override
-        public void run() {
-            new DataAsyncTask(new DataTaskListener() {
-                @Override
-                public void onGetDone(Double xAxis, Double yAxis, Double zAxis) {
-                    double tempForce = Math.sqrt(Math.pow(xAxis, 2) + Math.pow(yAxis, 2));
-                    force = Math.sqrt(Math.pow(tempForce, 2) + Math.pow(zAxis, 2));
-                    Log.i("Gijs", "" + force);
-                    forceCheck();
-
-                    handler.postDelayed(runnablecode, 500);
-                }
-
-                @Override
-                public void hasError() {
-
-                }
-            }).execute(urls);
+    @Override
+    public void onDataReceived(Double xAxis, Double yAxis, Double zAxis) {
+        double tempForce = Math.sqrt(Math.pow(xAxis, 2) + Math.pow(yAxis, 2));
+        latestForce = Math.sqrt(Math.pow(tempForce, 2) + Math.pow(zAxis, 2));
+        Log.i("Force", String.valueOf(latestForce));
+        if (forceCheck(latestForce)) {
+            takePicture();
+            successivePictures++;
         }
+        if (successivePictures < 3)
+            pictureHandler.postDelayed(this, 500);
+        else {
+            successivePictures = 0;
+            pictureHandler.postDelayed(this, 1000);
+        }
+    }
 
-    };
+    @Override
+    public void onExceptionThrown() {
+        Log.e(TAG, "Error getting data");
+        nDataErrors++;
+        if (nDataErrors < 3)
+            pictureHandler.postDelayed(this, 500);
+        else
+            Log.e(TAG, "Stopped getting data");
+    }
 
+
+    @Override
+    public void run() {
+        new DataAsyncTask(LiveViewActivity.this).execute(urls);
+    }
 }
-
