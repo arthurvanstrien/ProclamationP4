@@ -149,5 +149,33 @@ public class LiveViewActivity extends AppCompatActivity implements Camera.Pictur
         Log.v(TAG, "onClick");
         startActivity(new Intent(this, GalleryActivity.class));
     }
+
+    public void forceCheck(){
+        if(force>=3.0){
+            takePicture();}
+
+    }
+
+    private Runnable runnablecode = new Runnable() {
+        @Override
+        public void run() {
+            new DataAsyncTask(new DataTaskListener() {
+                @Override
+                public void onGetDone(Double xAxis, Double yAxis, Double zAxis) {
+                    double tempForce = Math.sqrt(Math.pow(xAxis, 2) + Math.pow(yAxis, 2));
+                    force = Math.sqrt(Math.pow(tempForce, 2) + Math.pow(zAxis, 2));
+                    System.out.println(force);
+                    forceCheck();
+                }
+
+                @Override
+                public void hasError() {
+
+                }
+            });
+        }
+
+    };
+
 }
 
