@@ -175,7 +175,6 @@ public class LiveViewActivity extends AppCompatActivity implements Camera.Pictur
         camera_view.addView(mCameraView);//add the SurfaceView to the layout
         pictureHandler.post(this);
     }
-}
 
     @Override
     public void onDataReceived(Double xAxis, Double yAxis, Double zAxis) {
@@ -198,7 +197,7 @@ public class LiveViewActivity extends AppCompatActivity implements Camera.Pictur
     public void onExceptionThrown() {
         Log.e(TAG, "Error getting data");
         nDataErrors++;
-        if (nDataErrors < 3)
+        if (nDataErrors < 5)
             pictureHandler.postDelayed(this, 500);
         else
             Log.e(TAG, "Stopped getting data");

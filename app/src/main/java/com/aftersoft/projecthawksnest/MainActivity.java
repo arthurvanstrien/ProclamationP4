@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         qrLoadingDialog.cancel();
         scannerView.stopCameraPreview();
         scannerView.stopCamera();
-        showBracketIntroduction();
+        startActivity(new Intent(getApplicationContext(), LiveViewActivity.class));
     }
 
     @Override
@@ -150,10 +150,6 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     public void onDisconnected() {
         Log.v(TAG, "onDisconnected");
 
-    }
-
-    public void showBracketIntroduction() {
-        startActivity(new Intent(getApplicationContext(), LiveViewActivity.class));
     }
 
     public boolean hasUsableSpace() {
