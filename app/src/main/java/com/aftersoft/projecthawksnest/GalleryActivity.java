@@ -23,6 +23,7 @@ import java.util.List;
 
 public class GalleryActivity extends AppCompatActivity {
     private ArrayList<GalleryItem> galleryItems;
+    private AlertDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,23 +59,76 @@ public class GalleryActivity extends AppCompatActivity {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.v("GalleryActivity", "nextButton.setOnClickListener");
-                File imagesFolderTemp = new File(getFilesDir(), "images");
-                File imagesFolder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getPath()+"/CoasterCam");
-                imagesFolder.mkdirs();
-                for (int count = imagesFolderTemp.listFiles().length - 1; count > -1; count--) {
-                    GalleryItem image = galleryItems.get(count);
-                    File imageFile = image.getPhoto();
-                    if (image.isChecked()){
-                        File dest = new File(imagesFolder.getPath(), String.valueOf(image.hashCode())+".jpg");
-                        FileOps.copyFileOrDirectory(imageFile, dest);
-                    }
-                    imagesFolderTemp.listFiles()[count].delete();
-                }
+                if (getTotalSelectedImages() > 0) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Log.v("GalleryActivity", "nextButton.setOnClickListener");
+                            File imagesFolderTemp = new File(getFilesDir(), "images");
+                            File imagesFolder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getPath()+"/CoasterCam");
+                            imagesFolder.mkdirs();
+                            for (int count = imagesFolderTemp.listFiles().length - 1; count > -1; count--) {
+                                GalleryItem image = galleryItems.get(count);
+                                File imageFile = image.getPhoto();
+                                if (image.isChecked()){
+                                    File dest = new File(imagesFolder.getPath(), String.valueOf(image.hashCode())+".jpg");
+                                    FileOps.copyFileOrDirectory(imageFile, dest);
+                                }
+                                imagesFolderTemp.listFiles()[count].delete();
+                            }
+                            AlertDialog dialog = new AlertDialog.Builder(GalleryActivity.this)
+                                    .setView(getLayoutInflater().inflate(R.layout.quitpopup, null))
+                                    .setTitle("Photo saving")
+                                    .setNeutralButton("Okay", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            Intent intent = new Intent(GalleryActivity.this, MainActivity.class );
+                                            intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP );
+                                            startActivity(intent);
+                                        }
+                                    })
+                                    .create();
+                            if (getTotalSelectedImages() > 1)
+                                dialog.setMessage("Your photo's have been saved");
+                            else
+                                dialog.setMessage("Your photo has been saved");
+                            dialog.setCanceledOnTouchOutside(false);
+                            dialog.show();
+                        }
+                    });
+                }else{
+                    if (galleryItems.size() > 0) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                dialog = new AlertDialog.Builder(GalleryActivity.this)
+                                        .setTitle("Continue without saving")
+                                        .setMessage("Are you sure you want to continue without saving your photo's?")
+                                        .setNeutralButton("I'm sure", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                Intent intent = new Intent(GalleryActivity.this, MainActivity.class);
+                                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                                startActivity(intent);
+                                            }
+                                        })
+                                        .setNegativeButton("No i'm not", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog1, int which) {
 
-                Intent intent = new Intent(GalleryActivity.this, MainActivity.class );
-                intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP );
-                startActivity(intent);
+                                            }
+                                        })
+                                        .create();
+                                dialog.setCanceledOnTouchOutside(false);
+                                dialog.show();
+                            }
+                        });
+                    }else{
+                        Intent intent = new Intent(GalleryActivity.this, MainActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
+                    }
+                }
             }
         });
 
@@ -100,28 +154,16 @@ public class GalleryActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed() {
-        startActivity(new Intent(this, QuitPopup.class));
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                AlertDialog.Builder builder = new AlertDialog.Builder(GalleryActivity.this);
-                View mView = getLayoutInflater().inflate(R.layout.quitpopup, null);
-                builder.setView(mView);
-                AlertDialog dialog = builder.create();
-                dialog.setCanceledOnTouchOutside(false);
-                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) {
-                        GalleryActivity.super.onBackPressed();
-                    }
-                });
+    public void onBackPressed() {}
 
-                WindowManager.LayoutParams wmlp = dialog.getWindow().getAttributes();
-                wmlp.y = (int) (getResources().getDisplayMetrics().heightPixels * 0.3);
-                dialog.show();
-            }
-        });
+    public int getTotalSelectedImages(){
+        int count = 0;
+
+        for (GalleryItem galleryItem : galleryItems) {
+            if (galleryItem.isChecked())
+                count++;
+        }
+
+        return count;
     }
 }

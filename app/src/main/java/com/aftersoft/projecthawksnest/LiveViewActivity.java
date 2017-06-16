@@ -1,5 +1,6 @@
 package com.aftersoft.projecthawksnest;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,6 +11,7 @@ import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.hardware.Camera;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -39,6 +41,19 @@ public class LiveViewActivity extends AppCompatActivity implements Camera.Pictur
         camera_view.addView(mCameraView);//add the SurfaceView to the layout
 
         findViewById(R.id.activityLiveView_fab_toGallery).setOnClickListener(this);
+
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle("Bracket Placement").setMessage("Place your phone inside of the bracket in front of you. Make sure your phone is fastened tightly.")
+                .setView(R.layout.bracketplacement)
+                .setNeutralButton("I understand", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                })
+                .create();
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
     }
 
     @Override
