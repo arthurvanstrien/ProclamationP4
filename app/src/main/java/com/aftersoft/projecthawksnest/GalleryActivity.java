@@ -101,9 +101,8 @@ public class GalleryActivity extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                dialog = new AlertDialog.Builder(GalleryActivity.this)
+                                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(GalleryActivity.this)
                                         .setTitle("Continue without saving")
-                                        .setMessage("Are you sure you want to continue without saving your photo's?")
                                         .setNeutralButton("I'm sure", new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
@@ -112,13 +111,13 @@ public class GalleryActivity extends AppCompatActivity {
                                                 startActivity(intent);
                                             }
                                         })
-                                        .setNegativeButton("No i'm not", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog1, int which) {
+                                        .setNegativeButton("No i'm not", null);
 
-                                            }
-                                        })
-                                        .create();
+                                if (galleryItems.size() > 1)
+                                    dialogBuilder.setMessage("Are you sure you want to continue without saving your photo's?");
+                                else
+                                    dialogBuilder.setMessage("Are you sure you want to continue without saving your photo?");
+                                dialog = dialogBuilder.create();
                                 dialog.setCanceledOnTouchOutside(false);
                                 dialog.show();
                             }
