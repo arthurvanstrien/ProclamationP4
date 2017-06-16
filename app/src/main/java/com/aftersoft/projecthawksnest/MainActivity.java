@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     private boolean resultHandled;
     private WifiManager wifiManager;
     private int netId = -1;
+    private WifiHandler wifiHandler;
     private AlertDialog dialog;
 
     @Override
@@ -65,6 +66,9 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
             scannerView.startCamera();
         }
 
+        wifiHandler = WifiHandler.getInstance(getApplicationContext());
+        wifiHandler.addOnWifiStateListener(this);
+
         wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -89,8 +93,9 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     protected void onPause() {
         super.onPause();
         scannerView.stopCamera();
-        if (netId >= 0)
-            wifiManager.removeNetwork(netId);
+        if (wifiHandler != null) {
+            wifiHandler.forget();
+        }
     }
 
     @Override
@@ -110,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         Log.v(TAG, result.getText()); // Prints scan results
         Log.v(TAG, result.getBarcodeFormat().toString());
         WifiParsedResult parsedResult = (WifiParsedResult) WifiResultParser.parseResult(result);
-        connectToWifi(parsedResult.getSsid(), parsedResult.getPassword(), parsedResult.getNetworkEncryption(), parsedResult.isHidden());
+        wifiHandler.connect(parsedResult.getSsid(), parsedResult.getPassword(), parsedResult.getNetworkEncryption(), parsedResult.isHidden());
     }
 
     @Override
