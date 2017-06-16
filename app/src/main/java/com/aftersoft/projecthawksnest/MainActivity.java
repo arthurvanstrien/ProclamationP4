@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Build;
@@ -15,6 +17,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
@@ -25,13 +28,14 @@ import java.util.Collections;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
-public class MainActivity extends AppCompatActivity implements ZXingScannerView.ResultHandler {
+public class MainActivity extends AppCompatActivity implements ZXingScannerView.ResultHandler, WifiHandler.WifiStateListener {
     public final static String TAG = "MainActivity";
     private static final int PERMISSIONS_REQUEST_ACCESS_CAMERA = 0;
     private ZXingScannerView scannerView;
     private boolean resultHandled;
     private WifiManager wifiManager;
     private int netId = -1;
+    private AlertDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +66,16 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         }
 
         wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        View mView = getLayoutInflater().inflate(R.layout.activity_qrloading, null);
+        builder.setView(mView);
+        dialog = builder.create();
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        WindowManager.LayoutParams wmlp = dialog.getWindow().getAttributes();
+        wmlp.y = (int) (getResources().getDisplayMetrics().heightPixels * 0.3);
     }
 
     @Override
@@ -91,6 +105,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
 
     @Override
     public void handleResult(Result result) {
+        dialog.show();
         resultHandled = true;
         Log.v(TAG, result.getText()); // Prints scan results
         Log.v(TAG, result.getBarcodeFormat().toString());
@@ -131,5 +146,20 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         wifiManager.enableNetwork(netId, true);
         wifiManager.reconnect();
         Log.i("Wifi connected: ", String.valueOf(wifiManager.getConnectionInfo()));
+    }
+
+    @Override
+    public void onConnected() {
+        dialog.cancel();
+    }
+
+    @Override
+    public void onConnectedFail() {
+        dialog.cancel();
+    }
+
+    @Override
+    public void onDisconnected() {
+
     }
 }
