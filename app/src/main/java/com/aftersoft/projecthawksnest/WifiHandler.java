@@ -2,6 +2,7 @@ package com.aftersoft.projecthawksnest;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.util.Log;
@@ -25,6 +26,7 @@ public class WifiHandler {
     private boolean connected;
     private int netId = -1;
     private List<WifiStateListener> wifiStateListeners = new ArrayList<>();
+    private ConnectionChangeListener connectionChangeListener = new ConnectionChangeListener();
 
     public static WifiHandler getInstance(Context applicationContext) {
         if (instance == null) {
@@ -50,10 +52,10 @@ public class WifiHandler {
      * @param hidden True if the network to connect to is hidden
      * @return Returns true if the connection was successful
      */
-    public boolean connect(String ssid, String password, String networkEncryption, boolean hidden) {
+    public void connect(String ssid, String password, String networkEncryption, boolean hidden) {
         Log.i("Connecting to", ssid);
         if (!networkEncryption.equals("WPA"))
-            return false;
+            return;
         wifiConfig = new WifiConfiguration();
         wifiConfig.SSID = String.format("\"%s\"", ssid);
         wifiConfig.preSharedKey = String.format("\"%s\"", password);
@@ -70,8 +72,6 @@ public class WifiHandler {
         }
 
         wifiManager.enableNetwork(netId, true);
-
-        return reconnect();
     }
 
     /**
@@ -97,17 +97,21 @@ public class WifiHandler {
                         }
                         Log.i("Wifi connected: ", String.valueOf(wifiManager.getConnectionInfo()));
                         connected = true;
+                        cancel();
                         timer.cancel();
+                        timer.purge();
                     }
                 }
                 Log.i("i: ", String.valueOf(i));
-                if (i > 100){
+                if (i > 300){
                     if (!connected) {
                         for (WifiStateListener wifiStateListener : wifiStateListeners) {
                             wifiStateListener.onConnectedFail();
                         }
                     }
+                    cancel();
                     timer.cancel();
+                    timer.purge();
                 }
             }
         };
@@ -130,6 +134,18 @@ public class WifiHandler {
 
         for (WifiStateListener wifiStateListener : wifiStateListeners) {
             wifiStateListener.onDisconnected();
+        }
+    }
+
+    public void onConnectionChanged(NetworkInfo wifiNetInfo) {
+        if (wifiManager.getConnectionInfo().getNetworkId() == netId && wifiNetInfo.isConnected()) {
+            for (WifiStateListener wifiStateListener : wifiStateListeners) {
+                wifiStateListener.onConnected();
+            }
+        } else if (wifiManager.getConnectionInfo().getNetworkId() != netId && !wifiNetInfo.isConnectedOrConnecting()) {
+            for (WifiStateListener wifiStateListener : wifiStateListeners) {
+                wifiStateListener.onConnectedFail();
+            }
         }
     }
 
