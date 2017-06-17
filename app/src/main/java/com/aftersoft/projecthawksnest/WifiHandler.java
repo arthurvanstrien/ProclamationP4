@@ -1,6 +1,9 @@
 package com.aftersoft.projecthawksnest;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiConfiguration;
@@ -26,7 +29,6 @@ public class WifiHandler {
     private boolean connected;
     private int netId = -1;
     private List<WifiStateListener> wifiStateListeners = new ArrayList<>();
-    private ConnectionChangeListener connectionChangeListener = new ConnectionChangeListener();
 
     public static WifiHandler getInstance(Context applicationContext) {
         if (instance == null) {
@@ -137,12 +139,14 @@ public class WifiHandler {
         }
     }
 
-    public void onConnectionChanged(NetworkInfo wifiNetInfo) {
-        if (wifiManager.getConnectionInfo().getNetworkId() == netId && wifiNetInfo.isConnected()) {
+    public void onConnectionChanged() {
+        if (netId == -1)
+            return;
+        if (wifiManager.getConnectionInfo().getNetworkId() == netId) {
             for (WifiStateListener wifiStateListener : wifiStateListeners) {
                 wifiStateListener.onConnected();
             }
-        } else if (wifiManager.getConnectionInfo().getNetworkId() != netId && !wifiNetInfo.isConnectedOrConnecting()) {
+        } else {
             for (WifiStateListener wifiStateListener : wifiStateListeners) {
                 wifiStateListener.onConnectedFail();
             }

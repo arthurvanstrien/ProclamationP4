@@ -1,10 +1,13 @@
 package com.aftersoft.projecthawksnest;
 
+import android.content.BroadcastReceiver;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
@@ -31,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     private boolean resultHandled;
     private WifiHandler wifiHandler;
     private AlertDialog qrLoadingDialog;
+    BroadcastReceiver wifiBroadcastReveiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +81,10 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     @Override
     protected void onResume() {
         super.onResume();
+        wifiBroadcastReveiver = new WifiBroadcastReceiver();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
+        registerReceiver(wifiBroadcastReveiver, filter);
         scannerView.setResultHandler(this);
         scannerView.startCamera();
     }
@@ -84,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     @Override
     protected void onPause() {
         super.onPause();
+        unregisterReceiver(wifiBroadcastReveiver);
         qrLoadingDialog.dismiss();
         scannerView.stopCamera();
         if (wifiHandler != null) {

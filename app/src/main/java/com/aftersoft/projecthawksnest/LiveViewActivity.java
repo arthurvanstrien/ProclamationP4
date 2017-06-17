@@ -44,6 +44,13 @@ public class LiveViewActivity extends AppCompatActivity implements Camera.Pictur
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_live_view);
         findViewById(R.id.activityLiveView_fab_toGallery).setOnClickListener(this);
+        findViewById(R.id.activityLiveView_fab_toGallery).setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                takePicture();
+                return true;
+            }
+        });
 
         pictureHandler = new Handler();
 
@@ -109,7 +116,7 @@ public class LiveViewActivity extends AppCompatActivity implements Camera.Pictur
     @Override
     public void onBackPressed() {
         Log.v(TAG, "onBackPressed");
-        takePicture();
+        super.onBackPressed();
     }
 
     @Override
