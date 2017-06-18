@@ -12,4 +12,6 @@
     <string name="scanningCode">Scanning QR-Code</string>
     <string name="explCodeScan">Scan the QR-Code near your seat by positioning the code within the rectangle.</string>
     <string name="IUnderstand">I understand</string>
+    <string name="brackPlace">Bracket Placement</string>
+    <string name="explBrackPlace">Place your phone inside of the bracket in front of you. Make sure your phone is fastened tightly.</string>
 </resources>

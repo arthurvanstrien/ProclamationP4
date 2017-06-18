@@ -56,9 +56,9 @@ public class LiveViewActivity extends AppCompatActivity implements Camera.Pictur
         pictureHandler = new Handler();
 
         AlertDialog dialog = new AlertDialog.Builder(this)
-                .setTitle("Bracket Placement").setMessage("Place your phone inside of the bracket in front of you. Make sure your phone is fastened tightly.")
+                .setTitle(getString(R.string.brackPlace)).setMessage(getString(R.string.explBrackPlace))
                 .setView(R.layout.bracketplacement)
-                .setNeutralButton("I understand", new DialogInterface.OnClickListener() {
+                .setNeutralButton(getString(R.string.IUnderstand), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
