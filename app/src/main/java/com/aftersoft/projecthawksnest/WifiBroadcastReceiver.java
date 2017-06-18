@@ -16,6 +16,7 @@ public class WifiBroadcastReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        WifiHandler.getInstance(context).onConnectionChanged();
+        NetworkInfo netInfo = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
+        WifiHandler.getInstance(context).onConnectionChanged(netInfo);
     }
 }

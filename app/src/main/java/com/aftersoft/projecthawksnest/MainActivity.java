@@ -143,19 +143,6 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     }
 
     @Override
-    public void onConnectedFail() {
-        Log.v(TAG, "onConnectedFail");
-        qrLoadingDialog.cancel();
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(scannerView.getContext(), "Verbinding maken mislukt", Toast.LENGTH_LONG).show();
-                scannerView.resumeCameraPreview(MainActivity.this);
-            }
-        });
-    }
-
-    @Override
     public void onDisconnected() {
         Log.v(TAG, "onDisconnected");
 

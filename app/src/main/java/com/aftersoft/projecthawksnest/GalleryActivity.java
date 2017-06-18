@@ -56,23 +56,14 @@ public class GalleryActivity extends AppCompatActivity {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (getTotalSelectedImages() > 0) {
+                if (galleryItems.size() == 0)
+                    backToStart();
+                else if (!noImagesSelected()) {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             Log.v("GalleryActivity", "nextButton.setOnClickListener");
-                            File imagesFolderTemp = new File(getFilesDir(), "images");
-                            File imagesFolder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getPath()+"/CoasterCam");
-                            imagesFolder.mkdirs();
-                            for (int count = imagesFolderTemp.listFiles().length - 1; count > -1; count--) {
-                                GalleryItem image = galleryItems.get(count);
-                                File imageFile = image.getPhoto();
-                                if (image.isChecked()){
-                                    File dest = new File(imagesFolder.getPath(), String.valueOf(image.hashCode())+".jpg");
-                                    FileOps.copyFileOrDirectory(imageFile, dest);
-                                }
-                                imagesFolderTemp.listFiles()[count].delete();
-                            }
+                            savePermanently();
                             AlertDialog dialog = new AlertDialog.Builder(GalleryActivity.this)
                                     .setView(getLayoutInflater().inflate(R.layout.quitpopup, null))
                                     .setTitle("Photo saving")
@@ -80,23 +71,16 @@ public class GalleryActivity extends AppCompatActivity {
                                     .setNeutralButton("Okay", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
-                                            WifiHandler.getInstance(GalleryActivity.this).forget();
-                                            Intent intent = new Intent(GalleryActivity.this, MainActivity.class );
-                                            intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP );
-                                            startActivity(intent);
+                                            backToStart();
                                         }
                                     })
                                     .create();
-                            if (getTotalSelectedImages() > 1)
-                                dialog.setMessage("Your photo's have been saved");
-                            else
-                                dialog.setMessage("Your photo has been saved");
+                            dialog.setMessage("Your photo(s) have been saved");
                             dialog.setCanceledOnTouchOutside(false);
                             dialog.show();
                         }
                     });
-                }else{
-                    if (galleryItems.size() > 0) {
+                } else {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -105,10 +89,8 @@ public class GalleryActivity extends AppCompatActivity {
                                         .setNeutralButton("I'm sure", new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
-                                                WifiHandler.getInstance(GalleryActivity.this).forget();
-                                                Intent intent = new Intent(GalleryActivity.this, MainActivity.class);
-                                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                                startActivity(intent);
+                                                deletePermanent();
+                                                backToStart();
                                             }
                                         })
                                         .setCancelable(false)
@@ -123,11 +105,6 @@ public class GalleryActivity extends AppCompatActivity {
                                 dialog.show();
                             }
                         });
-                    }else{
-                        Intent intent = new Intent(GalleryActivity.this, MainActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(intent);
-                    }
                 }
             }
         });
@@ -164,15 +141,12 @@ public class GalleryActivity extends AppCompatActivity {
         super.onBackPressed();
     }
 
-    public int getTotalSelectedImages(){
-        int count = 0;
-
+    public boolean noImagesSelected(){
         for (GalleryItem galleryItem : galleryItems) {
             if (galleryItem.isChecked())
-                count++;
+                return false;
         }
-
-        return count;
+        return true;
     }
 
 
@@ -186,6 +160,35 @@ public class GalleryActivity extends AppCompatActivity {
                 if (grantResults[i] != PackageManager.PERMISSION_GRANTED)
                     finishAffinity();
             }
+        }
+    }
+
+    private void savePermanently() {
+        File imagesFolderTemp = new File(getFilesDir(), "images");
+        File imagesFolder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getPath()+"/CoasterCam");
+        imagesFolder.mkdirs();
+        for (int count = imagesFolderTemp.listFiles().length - 1; count > -1; count--) {
+            GalleryItem image = galleryItems.get(count);
+            File imageFile = image.getPhoto();
+            if (image.isChecked()){
+                File dest = new File(imagesFolder.getPath(), String.valueOf(image.hashCode())+".jpg");
+                FileOps.copyFileOrDirectory(imageFile, dest);
+            }
+            imagesFolderTemp.listFiles()[count].delete();
+        }
+    }
+
+    private void backToStart() {
+        WifiHandler.getInstance(GalleryActivity.this).forget();
+        Intent intent = new Intent(GalleryActivity.this, MainActivity.class );
+        intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP );
+        startActivity(intent);
+    }
+
+    private void deletePermanent() {
+        File imagesFolderTemp = new File(getFilesDir(), "images");
+        for (int count = imagesFolderTemp.listFiles().length - 1; count > -1; count--) {
+            imagesFolderTemp.listFiles()[count].delete();
         }
     }
 }

@@ -43,7 +43,7 @@ public class WifiHandler {
 
     private WifiHandler(Context applicationContext) {
         wifiManager = (WifiManager) applicationContext.getApplicationContext().getSystemService(WIFI_SERVICE);
-        connManager = (ConnectivityManager) applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+        connManager = (ConnectivityManager) applicationContext.getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
     }
 
     /**
@@ -76,52 +76,6 @@ public class WifiHandler {
         wifiManager.enableNetwork(netId, true);
     }
 
-    /**
-     * Reconnect to the currently connected to network
-     * @return returns true if the reconnection was successful
-     */
-
-    int i = 0;
-
-    public boolean reconnect() {
-        connected = false;
-
-        final Timer timer = new Timer();
-
-        TimerTask task = new TimerTask() {
-            @Override
-            public void run() {
-                i++;
-                if (connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnected() && !connected) {
-                    if (wifiManager.getConnectionInfo().getSSID().equals(wifiConfig.SSID)) {
-                        for (WifiStateListener wifiStateListener : wifiStateListeners) {
-                            wifiStateListener.onConnected();
-                        }
-                        Log.i("Wifi connected: ", String.valueOf(wifiManager.getConnectionInfo()));
-                        connected = true;
-                        cancel();
-                        timer.cancel();
-                        timer.purge();
-                    }
-                }
-                Log.i("i: ", String.valueOf(i));
-                if (i > 300){
-                    if (!connected) {
-                        for (WifiStateListener wifiStateListener : wifiStateListeners) {
-                            wifiStateListener.onConnectedFail();
-                        }
-                    }
-                    cancel();
-                    timer.cancel();
-                    timer.purge();
-                }
-            }
-        };
-        timer.scheduleAtFixedRate(task, 0, 100);
-
-        return connected;
-    }
-
     public void disconnect() {
         if (wifiManager.getConnectionInfo().getNetworkId() == netId)
             wifiManager.disableNetwork(netId);
@@ -139,23 +93,19 @@ public class WifiHandler {
         }
     }
 
-    public void onConnectionChanged() {
+    public void onConnectionChanged(NetworkInfo netInfo) {
         if (netId == -1)
             return;
-        if (wifiManager.getConnectionInfo().getNetworkId() == netId) {
+        if (wifiManager.getConnectionInfo().getNetworkId() == netId && netInfo != null &&
+                netInfo.isConnected()) {
             for (WifiStateListener wifiStateListener : wifiStateListeners) {
                 wifiStateListener.onConnected();
-            }
-        } else {
-            for (WifiStateListener wifiStateListener : wifiStateListeners) {
-                wifiStateListener.onConnectedFail();
             }
         }
     }
 
     public interface WifiStateListener {
         void onConnected();
-        void onConnectedFail();
         void onDisconnected();
     }
 

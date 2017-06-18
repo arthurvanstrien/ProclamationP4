@@ -116,6 +116,7 @@ public class LiveViewActivity extends AppCompatActivity implements Camera.Pictur
     @Override
     public void onBackPressed() {
         Log.v(TAG, "onBackPressed");
+        WifiHandler.getInstance(this).forget();
         super.onBackPressed();
     }
 
