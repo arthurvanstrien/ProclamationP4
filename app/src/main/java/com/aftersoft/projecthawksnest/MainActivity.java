@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         wmlp.y = (int) (getResources().getDisplayMetrics().heightPixels * 0.3);
 
 //        Uncomment line below to skip QR-Code
-//        onConnected();
+        onConnected();
     }
 
     @Override

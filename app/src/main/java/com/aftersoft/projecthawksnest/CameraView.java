@@ -41,7 +41,7 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
         try {
             //when the surface is created, we can set the camera to draw images in this surfaceholder
             try {
-                mCamera = mCamera.open(Camera.CameraInfo.CAMERA_FACING_FRONT);
+                mCamera = Camera.open(Camera.CameraInfo.CAMERA_FACING_FRONT);
                 setParams();
             } catch (Exception e) {
                 Log.e(TAG, "mCamera.open", e);
@@ -67,7 +67,7 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
         }
 
         //now, recreate the camera preview
-        try{
+        try {
             mCamera.setPreviewDisplay(mHolder);
             mCamera.startPreview();
         } catch (IOException e) {
@@ -95,10 +95,11 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
         Collections.sort(supportedPicSizes, new Comparator<Camera.Size>() {
             @Override
             public int compare(Camera.Size o1, Camera.Size o2) {
-                return o1.width*o1.height-o2.width*o2.height;
+                return o2.width*o2.height-o1.width*o1.height;
             }
         });
         Camera.Size picSize = supportedPicSizes.get(0);
         params.setPictureSize(picSize.width, picSize.height);
+        mCamera.setParameters(params);
     }
 }
