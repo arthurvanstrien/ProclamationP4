@@ -1,12 +1,16 @@
 package com.aftersoft.projecthawksnest;
 
 import android.content.Context;
+import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * Created by Rick Verstraten on 1-6-2017.
@@ -21,6 +25,7 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
         super(context);
         try {
             mCamera = Camera.open(Camera.CameraInfo.CAMERA_FACING_FRONT);
+            setParams();
         } catch (RuntimeException e) {
             e.printStackTrace();
         }
@@ -37,6 +42,7 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
             //when the surface is created, we can set the camera to draw images in this surfaceholder
             try {
                 mCamera = mCamera.open(Camera.CameraInfo.CAMERA_FACING_FRONT);
+                setParams();
             } catch (Exception e) {
                 Log.e(TAG, "mCamera.open", e);
             }
@@ -80,5 +86,19 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
 
     public Camera getmCamera() {
         return mCamera;
+    }
+
+    private void setParams() {
+        Camera.Parameters params = mCamera.getParameters();
+        params.setPictureFormat(ImageFormat.JPEG);
+        List<Camera.Size> supportedPicSizes = params.getSupportedPictureSizes();
+        Collections.sort(supportedPicSizes, new Comparator<Camera.Size>() {
+            @Override
+            public int compare(Camera.Size o1, Camera.Size o2) {
+                return o1.width*o1.height-o2.width*o2.height;
+            }
+        });
+        Camera.Size picSize = supportedPicSizes.get(0);
+        params.setPictureSize(picSize.width, picSize.height);
     }
 }
