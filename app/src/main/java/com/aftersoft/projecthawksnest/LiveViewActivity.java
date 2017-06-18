@@ -11,9 +11,9 @@ import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.hardware.Camera;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -73,18 +73,6 @@ public class LiveViewActivity extends AppCompatActivity implements Camera.Pictur
             camera_view.addView(mCameraView);//add the SurfaceView to the layout
             pictureHandler.post(this);
         }
-    }
-
-    @Override
-    protected void onPause() {
-        Log.v(TAG, "onPause");
-        super.onPause();
-    }
-
-    @Override
-    protected void onResume() {
-        Log.v(TAG, "onResume");
-        super.onResume();
     }
 
     public Bitmap addData(Bitmap bitmap) {
@@ -162,9 +150,7 @@ public class LiveViewActivity extends AppCompatActivity implements Camera.Pictur
      * @return returs true if the threshold has been hit
      */
     public boolean forceCheck(double force){
-        if(force >= 3.0d || force <= -3.0d)
-            return true;
-        return false;
+        return force >= 3.0d || force <= -3.0d;
     }
 
     @Override

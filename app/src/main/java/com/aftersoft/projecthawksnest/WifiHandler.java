@@ -1,10 +1,6 @@
 package com.aftersoft.projecthawksnest;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
@@ -12,8 +8,6 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import static android.content.Context.WIFI_SERVICE;
 
@@ -24,9 +18,6 @@ import static android.content.Context.WIFI_SERVICE;
 public class WifiHandler {
     private static volatile WifiHandler instance;
     private WifiManager wifiManager;
-    private ConnectivityManager connManager;
-    private WifiConfiguration wifiConfig;
-    private boolean connected;
     private int netId = -1;
     private List<WifiStateListener> wifiStateListeners = new ArrayList<>();
 
@@ -43,7 +34,6 @@ public class WifiHandler {
 
     private WifiHandler(Context applicationContext) {
         wifiManager = (WifiManager) applicationContext.getApplicationContext().getSystemService(WIFI_SERVICE);
-        connManager = (ConnectivityManager) applicationContext.getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
     }
 
     /**
@@ -52,13 +42,12 @@ public class WifiHandler {
      * @param password Password of the network to connect to
      * @param networkEncryption Encryption type of the network to connect to
      * @param hidden True if the network to connect to is hidden
-     * @return Returns true if the connection was successful
      */
     public void connect(String ssid, String password, String networkEncryption, boolean hidden) {
         Log.i("Connecting to", ssid);
         if (!networkEncryption.equals("WPA"))
             return;
-        wifiConfig = new WifiConfiguration();
+        WifiConfiguration wifiConfig = new WifiConfiguration();
         wifiConfig.SSID = String.format("\"%s\"", ssid);
         wifiConfig.preSharedKey = String.format("\"%s\"", password);
         wifiConfig.hiddenSSID = hidden;

@@ -17,9 +17,8 @@ public class FileOps {
         if (src.isDirectory()) {
 
             String files[] = src.list();
-            int filesLength = files.length;
-            for (int i = 0; i < filesLength; i++) {
-                File src1 = new File(src, files[i]);;
+            for (String file : files) {
+                File src1 = new File(src, file);
                 copyFileOrDirectory(src1, dst);
             }
         } else {

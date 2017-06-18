@@ -8,14 +8,12 @@ import com.bumptech.glide.Glide;
 
 public class DetailPhotoActivity extends AppCompatActivity {
 
-    private GalleryItem galleryItem;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_photo);
 
-        galleryItem = (GalleryItem) getIntent().getExtras().get("galleryItem");
+        GalleryItem galleryItem = (GalleryItem) getIntent().getExtras().get("galleryItem");
 
         ImageView imageView = (ImageView) findViewById(R.id.imageView);
 

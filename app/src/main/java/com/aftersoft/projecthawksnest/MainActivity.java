@@ -16,7 +16,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
@@ -95,9 +94,6 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         unregisterReceiver(wifiBroadcastReveiver);
         qrLoadingDialog.dismiss();
         scannerView.stopCamera();
-        if (wifiHandler != null) {
-//            wifiHandler.forget();
-        }
     }
 
     @Override
@@ -155,9 +151,6 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
 
     public boolean hasUsableSpace() {
         File imagesFolder = new File(getFilesDir(), "images");
-        if (imagesFolder.getUsableSpace() >= 104857600)
-            return true;
-        else
-            return false;
+        return imagesFolder.getUsableSpace() >= 104857600;
     }
 }

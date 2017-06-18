@@ -3,10 +3,8 @@ package com.aftersoft.projecthawksnest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
-import android.util.Log;
 
 /**
  * Created by snick on 16-6-2017.

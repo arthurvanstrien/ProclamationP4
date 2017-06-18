@@ -113,11 +113,6 @@ public class GalleryActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable("galleryItems", galleryItems);
@@ -134,11 +129,6 @@ public class GalleryActivity extends AppCompatActivity {
             galleryItems.add(new GalleryItem(imagesFolder.listFiles()[count]));
         }
         return galleryItems;
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
     }
 
     public boolean noImagesSelected(){

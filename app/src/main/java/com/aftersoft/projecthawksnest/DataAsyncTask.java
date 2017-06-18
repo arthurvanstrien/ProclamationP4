@@ -3,7 +3,6 @@ package com.aftersoft.projecthawksnest;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -35,7 +34,7 @@ public class DataAsyncTask extends AsyncTask<String,Void,String> {
             URLConnection connection = url.openConnection();
 
             reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            response = reader.readLine().toString();
+            response = reader.readLine();
             String line;
             while ( (line = reader.readLine()) != null ) {
                 response += line;
