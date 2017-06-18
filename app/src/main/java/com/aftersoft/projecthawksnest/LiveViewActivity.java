@@ -22,6 +22,7 @@ import android.widget.FrameLayout;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.Calendar;
 
 /**
@@ -88,8 +89,8 @@ public class LiveViewActivity extends AppCompatActivity implements Camera.Pictur
         Bitmap bitmapEdited = bitmap.copy(Bitmap.Config.ARGB_8888, true);
 
         Canvas canvas = new Canvas(bitmapEdited);
-        canvas.drawText("G-Kracht: " + latestForce, 20, 140, paintText);
-        canvas.drawText("Essteling", 20, 60, paintText);
+        canvas.drawText(getString(R.string.gForce) + new DecimalFormat(".##").format(latestForce), 20, 140, paintText);
+        canvas.drawText(getString(R.string.companyName), 20, 60, paintText);
 
         return Bitmap.createBitmap(bitmapEdited,
                 0,

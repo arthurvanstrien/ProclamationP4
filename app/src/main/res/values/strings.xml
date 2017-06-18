@@ -1,3 +1,15 @@
 <resources>
-    <string name="app_name">CoasterCam</string>
+    <string name="app_name" translatable="false">CoasterCam</string>
+    <string name="photosSaving">Photo(s) saving</string>
+    <string name="ok">Okay</string>
+    <string name="photosSaved">Your photo(s) have been saved.</string>
+    <string name="contWOutSaving">Continue without saving</string>
+    <string name="imSure">I\'m sure</string>
+    <string name="noImNot">No I\'m not</string>
+    <string name="questContWOutSaving">Are you sure you want to continue without saving your photo(s)?</string>
+    <string name="gForce">G-force: </string>
+    <string name="companyName" translatable="false">Essteling</string>
+    <string name="scanningCode">Scanning QR-Code</string>
+    <string name="explCodeScan">Scan the QR-Code near your seat by positioning the code within the rectangle.</string>
+    <string name="IUnderstand">I understand</string>
 </resources>

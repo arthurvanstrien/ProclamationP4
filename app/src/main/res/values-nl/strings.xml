@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="IUnderstand">Begrepen</string>
+    <string name="contWOutSaving">Verdergaan zonder opslaan</string>
+    <string name="explCodeScan">Scan de QR-code bij je stoel door de code binnen de rechthoek te positioneren.</string>
+    <string name="gForce">"G-kracht: "</string>
+    <string name="imSure">Zeker</string>
+    <string name="noImNot">Onzeker</string>
+    <string name="ok">Oké</string>
+    <string name="photosSaved">Je foto(s) zijn opgeslagen</string>
+    <string name="photosSaving">Fotos(s) opslaan</string>
+    <string name="questContWOutSaving">Weet je zeker dat je verder wilt gaan zonder je foto(s) op te slaan?</string>
+    <string name="scanningCode">QR-Code scannen</string>
+</resources>

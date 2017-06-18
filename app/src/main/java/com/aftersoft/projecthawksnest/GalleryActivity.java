@@ -66,16 +66,16 @@ public class GalleryActivity extends AppCompatActivity {
                             savePermanently();
                             AlertDialog dialog = new AlertDialog.Builder(GalleryActivity.this)
                                     .setView(getLayoutInflater().inflate(R.layout.quitpopup, null))
-                                    .setTitle("Photo saving")
+                                    .setTitle(getString(R.string.photosSaving))
                                     .setCancelable(false)
-                                    .setNeutralButton("Okay", new DialogInterface.OnClickListener() {
+                                    .setNeutralButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
                                             backToStart();
                                         }
                                     })
                                     .create();
-                            dialog.setMessage("Your photo(s) have been saved");
+                            dialog.setMessage(getString(R.string.photosSaved));
                             dialog.setCanceledOnTouchOutside(false);
                             dialog.show();
                         }
@@ -85,8 +85,8 @@ public class GalleryActivity extends AppCompatActivity {
                             @Override
                             public void run() {
                                 AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(GalleryActivity.this)
-                                        .setTitle("Continue without saving")
-                                        .setNeutralButton("I'm sure", new DialogInterface.OnClickListener() {
+                                        .setTitle(R.string.contWOutSaving)
+                                        .setNeutralButton(R.string.imSure, new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
                                                 deletePermanent();
@@ -94,12 +94,9 @@ public class GalleryActivity extends AppCompatActivity {
                                             }
                                         })
                                         .setCancelable(false)
-                                        .setNegativeButton("No i'm not", null);
+                                        .setNegativeButton(getString(R.string.noImNot), null);
 
-                                if (galleryItems.size() > 1)
-                                    dialogBuilder.setMessage("Are you sure you want to continue without saving your photo's?");
-                                else
-                                    dialogBuilder.setMessage("Are you sure you want to continue without saving your photo?");
+                                dialogBuilder.setMessage(getString(R.string.questContWOutSaving));
                                 dialog = dialogBuilder.create();
                                 dialog.setCanceledOnTouchOutside(false);
                                 dialog.show();

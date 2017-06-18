@@ -41,11 +41,11 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         LayoutInflater factory = getLayoutInflater();
         final View view = factory.inflate(R.layout.introduction, null);
         new AlertDialog.Builder(MainActivity.this)
-                .setTitle("Scanning QR-Code")
+                .setTitle(getString(R.string.scanningCode))
                 .setView(view)
-                .setMessage("Scan the QR-code near your seat by positioning the code within the rectangle.")
+                .setMessage(getString(R.string.explCodeScan))
                 .setCancelable(false)
-                .setNeutralButton("I understand", new DialogInterface.OnClickListener() {
+                .setNeutralButton(getString(R.string.IUnderstand), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
