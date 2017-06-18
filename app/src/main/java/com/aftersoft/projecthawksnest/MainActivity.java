@@ -116,8 +116,13 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         resultHandled = true;
         qrLoadingDialog.show();
         Log.v(TAG, result.getText()); // Prints scan results
-        WifiParsedResult parsedResult = (WifiParsedResult) WifiResultParser.parseResult(result);
-        wifiHandler.connect(parsedResult.getSsid(), parsedResult.getPassword(), parsedResult.getNetworkEncryption(), parsedResult.isHidden());
+        final WifiParsedResult parsedResult = (WifiParsedResult) WifiResultParser.parseResult(result);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                wifiHandler.connect(parsedResult.getSsid(), parsedResult.getPassword(), parsedResult.getNetworkEncryption(), parsedResult.isHidden());
+            }
+        }).start();
     }
 
     @Override
