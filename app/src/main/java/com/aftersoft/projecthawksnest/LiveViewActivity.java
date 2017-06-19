@@ -24,6 +24,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.Calendar;
+import java.util.Queue;
 
 /**
  * Created by Rick Verstraten on 1-6-2017.
@@ -34,7 +35,7 @@ public class LiveViewActivity extends AppCompatActivity implements Camera.Pictur
     public final static String TAG = "LiveViewActivity";
     private CameraView mCameraView = null;
     private String[] urls = new String[] {"http://192.168.4.1:8080"};
-    private double latestForce;
+    private Queue<Double> forcesQueue;
     private int successivePictures;
     private int nDataErrors;
     private Handler pictureHandler;
@@ -77,6 +78,7 @@ public class LiveViewActivity extends AppCompatActivity implements Camera.Pictur
     }
 
     public Bitmap addData(Bitmap bitmap) {
+        double correspondingForce = forcesQueue.poll();
         Typeface plain = Typeface.createFromAsset(getAssets(), "fonts/DK Jambo.ttf");
         Paint paintText = new Paint();
         Paint paint = new Paint();
@@ -89,7 +91,7 @@ public class LiveViewActivity extends AppCompatActivity implements Camera.Pictur
         Bitmap bitmapEdited = bitmap.copy(Bitmap.Config.ARGB_8888, true);
 
         Canvas canvas = new Canvas(bitmapEdited);
-        canvas.drawText(getString(R.string.gForce) + new DecimalFormat(".##").format(latestForce), 20, 140, paintText);
+        canvas.drawText(getString(R.string.gForce) + new DecimalFormat(".##").format(correspondingForce), 20, 140, paintText);
         canvas.drawText(getString(R.string.companyName), 20, 60, paintText);
 
         return Bitmap.createBitmap(bitmapEdited,
@@ -174,28 +176,29 @@ public class LiveViewActivity extends AppCompatActivity implements Camera.Pictur
     @Override
     public void onDataReceived(Double xAxis, Double yAxis, Double zAxis) {
         double tempForce = Math.sqrt(Math.pow(xAxis, 2) + Math.pow(yAxis, 2));
-        latestForce = Math.sqrt(Math.pow(tempForce, 2) + Math.pow(zAxis, 2));
+        double latestForce = Math.sqrt(Math.pow(tempForce, 2) + Math.pow(zAxis, 2));
         Log.i("Force", String.valueOf(latestForce));
         if (forceCheck(latestForce)) {
+            forcesQueue.add(latestForce);
             takePicture();
-            successivePictures++;
+//            successivePictures++;
         }
-        if (successivePictures < 3)
-            pictureHandler.postDelayed(this, 500);
-        else {
-            successivePictures = 0;
-            pictureHandler.postDelayed(this, 1000);
-        }
+//        if (successivePictures < 3)
+            pictureHandler.postDelayed(this, 100);
+//        else {
+//            successivePictures = 0;
+//            pictureHandler.postDelayed(this, 500);
+//        }
     }
 
     @Override
     public void onExceptionThrown() {
         Log.e(TAG, "Error getting data");
-        nDataErrors++;
-        if (nDataErrors < 5)
+//        nDataErrors++;
+//        if (nDataErrors < 5)
             pictureHandler.postDelayed(this, 500);
-        else
-            Log.e(TAG, "Stopped getting data");
+//        else
+//            Log.e(TAG, "Stopped getting data");
     }
 
 
