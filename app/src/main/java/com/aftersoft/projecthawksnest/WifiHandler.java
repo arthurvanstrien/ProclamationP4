@@ -1,9 +1,14 @@
 package com.aftersoft.projecthawksnest;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
+import android.net.NetworkRequest;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -34,6 +39,24 @@ public class WifiHandler {
 
     private WifiHandler(Context applicationContext) {
         wifiManager = (WifiManager) applicationContext.getApplicationContext().getSystemService(WIFI_SERVICE);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            final ConnectivityManager connManager = (ConnectivityManager) applicationContext
+                    .getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkRequest.Builder request = new NetworkRequest.Builder()
+                    .addTransportType(NetworkCapabilities.TRANSPORT_WIFI);
+            connManager.requestNetwork(request.build(), new ConnectivityManager.NetworkCallback() {
+                @Override
+                public void onAvailable(Network network) {
+                    super.onAvailable(network);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        connManager.bindProcessToNetwork(network);
+                    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+                        ConnectivityManager.setProcessDefaultNetwork(network);
+                    }
+                }
+            });
+        }
     }
 
     /**
